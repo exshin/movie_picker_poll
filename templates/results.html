@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+               "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+  <body>
+
+{% if results %}
+  <h4 style="font-family:verdana;">Displaying Movie Poll Results</h4>
+  <h5 style="font-family:verdana;">Current Top Movie is....  {{results[0][0]}}</h5>
+{% else %}
+  <h4 style="font-family:verdana;">No Results yet... Oh Oh! You should vote!</h4>
+{% endif %}
+</br>
+
+{% if results %}
+  <table class="table table-hover" cellpadding = '3'>
+    <tbody>
+      <tr>
+        <th>Movie</th>
+        <th>Votes</th>
+      </tr> 
+      {% for row in results %}
+      <tr>
+        <td>{{row[0]}}</td>
+        <td>{{row[1]}}</td>
+      </tr> 
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <h3></h3>
+{% endif %}
+
+  <p></br></p>
+  <p></br></p>
+  <p></br></p>
+
+  </body>
+</html>

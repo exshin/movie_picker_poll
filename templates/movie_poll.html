@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+               "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+
+<style>
+table, td, th {
+    border: 1px solid black;
+    border-collapse:collapse;
+}
+
+td {
+    text-align: left;
+}
+</style>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Movie Poll!</title>
+</head>
+<body>
+<h3 style="font-family:verdana;">Movie Poll</h3>
+<!--
+<form action="candidates" method="post">
+        <p> Please enter the skill (language) to search</p>
+        <input type="text" name="skill" size="35" maxlength="60" />
+        <p><input type="submit" value="Search"/> <input type="reset" value="Clear"/></p>
+
+</form>
+-->
+{% if results %}
+ <div id="radios1" class="btn-group view-opt-btn-group" data-toggle="buttons-radio">
+ {% for row in results %}
+ 	<button type="button" class="btn active" name="radio_movie" value="{{row[0]}}">{{row[0]}}</button>
+ {% endfor %}
+ </div>
+ <form action="/" method="POST">
+    Other: <input type="text" name="other_movie">
+	<input type="submit" value="Vote!">
+  </form>
+{% else %}
+  <form action="/" method="POST">
+    Other: <input type="text" name="other_movie">
+	<input type="submit" value="Vote!">
+  </form>
+{% endif %}
+
+<p></br></p>
+<p></br></p>
+<p></br></p>
+
+</body></html>
