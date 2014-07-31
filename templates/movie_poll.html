@@ -12,14 +12,15 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
-<h3 style="font-family:verdana;">Movie Poll</h3>
+  <div class="container">
+    <h1 style="font-family:verdana;">Movie Poll</h1>
+  </div>
 
+<div class="container">
 {% if results %}
-
  <form action="/results" method="POST">
  	<span class="input-group-addon">Movie Choices</span>
     <fieldset>
-        <label>Movie Choices</label><br />
         {% for row in results %}
             <input type="radio" name="movie" value="{{row[0]}}" /> {{row[0]}} <br/>
         {% endfor %}
@@ -38,6 +39,7 @@
 	<input type="submit" value="Add!">
   </form>
 {% endif %}
+</div>
 
 <p></br></p>
 <p></br></p>
