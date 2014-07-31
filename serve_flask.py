@@ -9,14 +9,14 @@ from movie_picker import *
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/movie_poll')
 def show_poll():
     today = datetime.today().date()
     start_date = (datetime.today()-timedelta(days=7)).date()
     results = get_movie_votes(start_date,today)
     return render_template('movie_poll.html',results=results)
 
-@app.route('/', methods=['GET','POST'])
+@app.route('/results', methods=['GET','POST'])
 def new_vote():
     movie = request.form['radio_movie']
     if not movie:
