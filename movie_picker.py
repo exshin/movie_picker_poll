@@ -13,14 +13,16 @@ def connect_db(connection='heroku_movies'):
 	except Exception as error:
 		print error
 		dbCursor = None
-	return dbCursor
+		conn = None
+	return conn,dbCursor
 
 def get_movie_votes(date_start,date_end):
 	# get movie votes within a given time frame
 	try:
-		dbCursor = connect_db()
+		conn,dbCursor = connect_db()
 		dbCursor.execute(sql_movie_counts,[date_start,date_end])
 		results = dbCursor.fetchall()
+		conn.close()
 	except Exception as error:
 		print error, 'Get Results Unsuccessful'
 		results = []
@@ -29,7 +31,9 @@ def get_movie_votes(date_start,date_end):
 def vote(movie):
 	# write movie vote to database
 	try:
-		dbCursor = connect_db()
+		conn,dbCursor = connect_db()
 		dbCursor.execute(sql_write_vote,[movie,])
+		conn.commit()
+		conn.close()
 	except Exception as error:
 		print error, 'Vote Unsuccessful'

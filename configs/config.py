@@ -64,7 +64,7 @@ config.getdef = types.MethodType(getdef, config)
 pathDIR = {'pathDIR': config.getdef('paths', 'pathDIR', '')
         }
 
-connStr = {'heroku_movies': config.getdef('db', 'connStr', '')
+connStr = {'heroku_movies': config.getdef('db', 'heroku_movies', '')
     }
 
 
