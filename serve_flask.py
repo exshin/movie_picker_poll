@@ -14,21 +14,22 @@ def index():
     return 'Nothing here'
 
 
-@app.route('/movie_poll')
+@app.route('/movie_poll', methods=['GET','POST'])
 def show_poll():
     today = datetime.today().date()
     start_date = (datetime.today()-timedelta(days=7)).date()
     results = get_movie_votes(start_date,today)
-    return render_template('movie_poll.html',results=results)
 
-@app.route('/movie_poll', methods=['GET','POST'])
-def new_vote():
     movie = request.form['radio_movie']
     print movie
     if not movie:
         movie = request.form['other_movie']
         print movie
     vote(movie)
+    return render_template('movie_poll.html',results=results)
+
+@app.route('/results')
+def new_vote():
     today = datetime.today().date()
     start_date = (datetime.today()-timedelta(days=7)).date()
     results = get_movie_votes(start_date,today)
