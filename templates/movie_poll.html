@@ -8,20 +8,18 @@
 </head>
 <body>
 <h3 style="font-family:verdana;">Movie Poll</h3>
-<!--
-<form action="candidates" method="post">
-        <p> Please enter the skill (language) to search</p>
-        <input type="text" name="skill" size="35" maxlength="60" />
-        <p><input type="submit" value="Search"/> <input type="reset" value="Clear"/></p>
 
-</form>
--->
 {% if results %}
- <div id="radios1" class="btn-group view-opt-btn-group" data-toggle="buttons-radio">
- {% for row in results %}
- 	<button type="button" class="btn active" name="radio_movie" value="{{row[0]}}">{{row[0]}}</button>
- {% endfor %}
- </div>
+ <form action="/results" method="POST">
+    <fieldset>
+        <legend>Movie Choices Legend</legend>
+        <label>Movie Choices Label</label><br />
+        {% for row in results %}
+            <input type="radio" name="radio_movie" value="{{row[0]}}" /> {{row[0]}} <br/>
+        {% endfor %}
+    </fieldset>
+  <input type="submit" /> 
+ </form>
  <form action="/results" method="POST">
     Other: <input type="text" name="other_movie">
 	<input type="submit" value="Vote!">
