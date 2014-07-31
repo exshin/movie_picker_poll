@@ -3,8 +3,13 @@
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Movie Poll!</title>
+ <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
+  <link rel="stylesheet" href="./static/style.css"></style>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
 <h3 style="font-family:verdana;">Movie Poll</h3>
@@ -12,6 +17,7 @@
 {% if results %}
 
  <form action="/results" method="POST">
+ 	<span class="input-group-addon">Movie Choices</span>
     <fieldset>
         <label>Movie Choices</label><br />
         {% for row in results %}
@@ -36,5 +42,8 @@
 <p></br></p>
 <p></br></p>
 <p></br></p>
+
+  <script src="./static/jquery-1.11.1.min.js"></script>
+  <script src="./static/bootstrap.min.js"></script>
 
 </body></html>
