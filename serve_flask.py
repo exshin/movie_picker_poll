@@ -14,20 +14,22 @@ def index():
     return 'Nothing here'
 
 
-@app.route('/movie_poll')
+@app.route('/movie_poll', methods=['GET','POST'])
 def show_poll():
-    today = datetime.today().date()
+    today = (datetime.today()+timedelta(days=1)).date()
     start_date = (datetime.today()-timedelta(days=7)).date()
     results = get_movie_votes(start_date,today)
     print results
-    movie = request.form['other_movie']
-    print movie
-    vote(movie)
     return render_template('movie_poll.html',results=results)
 
 @app.route('/results', methods=['GET','POST'])
 def show_results():
-    today = datetime.today().date()
+    if request.method == 'POST':
+        movie = request.form['movie']
+        if movie:
+            print movie
+            vote(movie)
+    today = (datetime.today()+timedelta(days=1)).date()
     start_date = (datetime.today()-timedelta(days=7)).date()
     results = get_movie_votes(start_date,today)
     return render_template('results.html',results=results)

@@ -10,26 +10,26 @@
 <h3 style="font-family:verdana;">Movie Poll</h3>
 
 {% if results %}
-<!--
+
  <form action="/results" method="POST">
     <fieldset>
-        <legend>Movie Choices Legend</legend>
-        <label>Movie Choices Label</label><br />
+        <label>Movie Choices</label><br />
         {% for row in results %}
-            <input type="radio" name="radio_movie" value="{{row[0]}}" /> {{row[0]}} <br/>
+            <input type="radio" name="movie" value="{{row[0]}}" /> {{row[0]}} <br/>
         {% endfor %}
     </fieldset>
-  <input type="submit" /> 
+  <input type="submit" value="Vote!"/> 
  </form>
--->
+ </br>
+ </br>
  <form action="/results" method="POST">
-    Other: <input type="text" name="other_movie">
-	<input type="submit" value="Vote!">
+    Add New Movie Option: <input type="text" name="movie">
+	<input type="submit" value="Add!">
   </form>
 {% else %}
   <form action="/results" method="POST">
-    Other: <input type="text" name="other_movie">
-	<input type="submit" value="Vote!">
+    Add New Movie Option: <input type="text" name="movie">
+	<input type="submit" value="Add!">
   </form>
 {% endif %}
 
