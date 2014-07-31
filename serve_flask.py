@@ -20,11 +20,8 @@ def show_poll():
     start_date = (datetime.today()-timedelta(days=7)).date()
     results = get_movie_votes(start_date,today)
     print results
-    movie = request.form['radio_movie']
+    movie = request.form['other_movie']
     print movie
-    if not movie:
-        movie = request.form['other_movie']
-        print movie
     vote(movie)
     return render_template('movie_poll.html',results=results)
 
