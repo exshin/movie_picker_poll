@@ -11,7 +11,7 @@ app = Flask(__name__)
 @app.route('/')
 def show_poll():
     today = datetime.today().date()
-    start_date = (datetime.today()-timedelta(days=7)).date()
+    start_date = (datetime.today()-datetime.timedelta(days=7)).date()
     results = get_movie_votes(start_date,today)
     return render_template('movie_poll.html',results=results)
 
