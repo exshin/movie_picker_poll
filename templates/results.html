@@ -2,10 +2,24 @@
                "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Movie Poll!</title>
+ <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
+  <link rel="stylesheet" href="./static/style.css"></style>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+  <div class="container">
+    <h1 style="font-family:verdana;">Movie Poll Results</h1>
+  </div>
   <body>
 
+<div class="container">
 {% if results %}
-  <h4 style="font-family:verdana;">Displaying Movie Poll Results</h4>
   <h5 style="font-family:verdana;">Current Top Movie is....  {{results[0][0]}}</h5>
 {% else %}
   <h4 style="font-family:verdana;">No Results yet... Oh Oh! You should vote!</h4>
@@ -30,10 +44,13 @@
 {% else %}
   <h3></h3>
 {% endif %}
+</div>
 
   <p></br></p>
   <p></br></p>
   <p></br></p>
+  <script src="./static/jquery-1.11.1.min.js"></script>
+  <script src="./static/bootstrap.min.js"></script>
 
   </body>
 </html>
