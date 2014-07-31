@@ -14,7 +14,7 @@ def index():
     return 'Nothing here'
 
 
-@app.route('/movie_poll', methods=['GET','POST'])
+@app.route('/movie_poll')
 def show_poll():
     today = datetime.today().date()
     start_date = (datetime.today()-timedelta(days=7)).date()
@@ -25,7 +25,7 @@ def show_poll():
     vote(movie)
     return render_template('movie_poll.html',results=results)
 
-@app.route('/results')
+@app.route('/results', methods=['GET','POST'])
 def show_results():
     today = datetime.today().date()
     start_date = (datetime.today()-timedelta(days=7)).date()
