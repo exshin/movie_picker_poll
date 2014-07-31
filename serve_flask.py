@@ -9,7 +9,12 @@ from movie_picker import *
 
 app = Flask(__name__)
 
-@app.route('/movie_poll')
+@app.route('/')
+def index():
+    return 'Nothing here'
+
+
+@app.route('/movie_poll', methods=['GET','POST'])
 def show_poll():
     today = datetime.today().date()
     start_date = (datetime.today()-timedelta(days=7)).date()
