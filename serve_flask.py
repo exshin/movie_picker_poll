@@ -1,8 +1,10 @@
 #!/usr/bin/python27
 
+import os
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import send_from_directory
 from datetime import datetime
 from datetime import timedelta
 from movie_picker import *
@@ -12,7 +14,6 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return 'Nothing here'
-
 
 @app.route('/movie_poll', methods=['GET','POST'])
 def show_poll():
@@ -33,6 +34,11 @@ def show_results():
     start_date = (datetime.today()-timedelta(days=7)).date()
     results = get_movie_votes(start_date,today)
     return render_template('results.html',results=results)
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico')
 
 if __name__ == '__main__':
     app.debug = True
