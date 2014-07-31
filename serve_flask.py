@@ -19,9 +19,13 @@ def show_poll():
 @app.route('/results', methods=['GET','POST'])
 def new_vote():
     movie = request.form['radio_movie']
+    print movie
     if not movie:
         movie = request.form['other_movie']
+        print movie
     vote(movie)
+    today = datetime.today().date()
+    start_date = (datetime.today()-timedelta(days=7)).date()
     results = get_movie_votes(start_date,today)
     return render_template('results.html',results=results)
 
