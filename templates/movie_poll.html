@@ -3,18 +3,6 @@
 
 <html>
 <head>
-
-<style>
-table, td, th {
-    border: 1px solid black;
-    border-collapse:collapse;
-}
-
-td {
-    text-align: left;
-}
-</style>
-
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Movie Poll!</title>
 </head>
@@ -34,12 +22,12 @@ td {
  	<button type="button" class="btn active" name="radio_movie" value="{{row[0]}}">{{row[0]}}</button>
  {% endfor %}
  </div>
- <form action="/" method="POST">
+ <form action="/results" method="POST">
     Other: <input type="text" name="other_movie">
 	<input type="submit" value="Vote!">
   </form>
 {% else %}
-  <form action="/" method="POST">
+  <form action="/results" method="POST">
     Other: <input type="text" name="other_movie">
 	<input type="submit" value="Vote!">
   </form>
