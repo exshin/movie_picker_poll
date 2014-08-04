@@ -17,6 +17,15 @@
     <h1 style="font-family:verdana;">Movie Poll</h1>
   </div>
 
+
+{% if user %}
+<div class="container">
+  <p>{{user}}</p>
+  <p>{{user.data}}</p>
+</div>
+{% endif %}
+
+
 <div class="container">
 {% if results %}
  <form action="/results" method="POST">

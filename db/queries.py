@@ -8,8 +8,11 @@ SELECT DISTINCT
 	,COUNT(v.id) count_votes
 FROM
 	votes v
+	LEFT JOIN
+	watched_movies w
+	ON v.movie = w.movie
 WHERE
-	v.vote_date BETWEEN %s AND %s
+	w.id IS NULL
 GROUP BY
 	v.movie
 ORDER BY
@@ -22,6 +25,19 @@ INSERT INTO votes
 (
 	movie,
 	vote_date
+)
+VALUES
+(
+	%s,
+	current_date
+)
+"""
+
+sql_write_watched = """
+INSERT INTO watched_movies
+(
+	movie,
+	view_date
 )
 VALUES
 (

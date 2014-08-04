@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 
 from psycopg2 import connect
-from db.queries import sql_movie_counts, sql_write_vote
+from db.queries import *
 from configs.config import connStr
 
 def connect_db(connection='heroku_movies'):
@@ -16,11 +16,11 @@ def connect_db(connection='heroku_movies'):
 		conn = None
 	return conn,dbCursor
 
-def get_movie_votes(date_start,date_end):
+def get_movie_votes():
 	# get movie votes within a given time frame
 	try:
 		conn,dbCursor = connect_db()
-		dbCursor.execute(sql_movie_counts,[date_start,date_end])
+		dbCursor.execute(sql_movie_counts)
 		results = dbCursor.fetchall()
 		conn.close()
 	except Exception as error:
@@ -37,3 +37,17 @@ def vote(movie):
 		conn.close()
 	except Exception as error:
 		print error, 'Vote Unsuccessful'
+
+def watched(movie):
+	# Add viewed movies to the database
+	try:
+		conn,dbCursor = connect_db()
+		dbCursor.execute(sql_write_watched,[movie,])
+		conn.commit()
+		conn.close()
+	except Exception as error:
+		print error, 'Vote Unsuccessful'
+
+
+#TODO Google Auth Login
+#TODO One movie per person 
