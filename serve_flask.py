@@ -2,7 +2,7 @@
 
 import os
 from flask import Flask, make_response, render_template, request
-from flask import send_from_directory
+from flask import send_from_directory, session, url_for, redirect
 from datetime import datetime
 from datetime import timedelta
 from movie_picker import *
@@ -26,26 +26,30 @@ authomatic = Authomatic(CONFIG, 'random secret string for session signing')
 
 @app.route('/movie_poll', methods=['GET', 'POST'])
 def login(provider_name='google'):
-    response = make_response()
-
-    # Authenticate the user
-    result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
-    movie_results = get_movie_votes()
-
-    if result:
-        if result.user:
-
-            # Get user info
-            result.user.update()
-
-            # Talk to Google API
-            if result.user.credentials:
-                response = result.provider.access('https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
-                if response.status == 200:
-                    pass
+    if not session.get('user_email'):
+        response = make_response()
+        # Authenticate the user
+        result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
+        movie_results = get_movie_votes()
+        if result:
+            if result.user:
+                # Get user info
+                result.user.update()
+                # Talk to Google API
+                if result.user.credentials:
+                    response = result.provider.access('https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
+                    if response.status == 200:
+                        pass
+                if result.user.email:
+                    session['user_email'] = result.user.email
+            return render_template('movie_poll.html',
+                                user=result.user,
+                                results=movie_results)
+    else:
+        movie_results = get_movie_votes()
         return render_template('movie_poll.html',
-                            user=result.user,
-                            results=movie_results)
+                                user=session.get('user_email'),
+                                results=movie_results)
     return response
 
 @app.route('/')
@@ -57,8 +61,8 @@ def show_results():
     if request.method == 'POST':
         movie = request.form['movie']
         if movie:
-            print movie
-            vote(movie)
+            print movie, session.get('user_email')
+            vote(movie, session.get('user_email'))
     results = get_movie_votes()
     return render_template('results.html',results=results)
 
@@ -67,6 +71,13 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico')
 
+@app.route('/clear_sessions')
+def clear_sessions():
+    session.clear()
+    return """
+        <p>Logged out</p>
+        <p><a href="/movie_poll">Return to Movie Poll</a></p>
+        """ 
 
 if __name__ == '__main__':
     app.debug = True

@@ -28,11 +28,11 @@ def get_movie_votes():
 		results = []
 	return results
 
-def vote(movie):
+def vote(movie, user_email=None):
 	# write movie vote to database
 	try:
 		conn,dbCursor = connect_db()
-		dbCursor.execute(sql_write_vote,[movie,])
+		dbCursor.execute(sql_write_vote,[movie,user_email])
 		conn.commit()
 		conn.close()
 	except Exception as error:

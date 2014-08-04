@@ -17,17 +17,6 @@
     <h1 style="font-family:verdana;">Movie Poll</h1>
   </div>
 
-
-{% if user %}
-<div class="container">
-  <p>Logged in as : {{user.data.displayName}} </p>
-  <p>{{user.email}}</p>
-  <p>{{user.data.name.givenName}} {{user.data.name.familyName}}</p>
-  <p>{{user.data}}</p>
-</div>
-{% endif %}
-
-
 <div class="container">
 {% if results %}
  <form action="/results" method="POST">
@@ -56,6 +45,13 @@
 <p></br></p>
 <p></br></p>
 <p></br></p>
+
+{% if user %}
+<div class="container">
+  <p>(Logged in as : {{user.data.displayName}})</p>
+  <p><form action="/clear_sessions"><input type="submit" value="Click to Logout"></p>
+</div>
+{% endif %}
 
   <script src="./static/jquery-1.11.1.min.js"></script>
   <script src="./static/bootstrap.min.js"></script>

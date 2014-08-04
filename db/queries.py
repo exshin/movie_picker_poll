@@ -5,7 +5,7 @@
 sql_movie_counts = """
 SELECT DISTINCT
 	v.movie
-	,COUNT(v.id) count_votes
+	,COUNT(DISTINCT v.user_email) count_votes
 FROM
 	votes v
 	LEFT JOIN
@@ -24,12 +24,14 @@ sql_write_vote = """
 INSERT INTO votes
 (
 	movie,
-	vote_date
+	vote_date,
+	user_email
 )
 VALUES
 (
 	%s,
-	current_date
+	current_date,
+	%s
 )
 """
 
