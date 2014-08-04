@@ -78,6 +78,8 @@ def clear_sessions():
         <p>Logged out</p>
         <p><a href="/movie_poll">Return to Movie Poll</a></p>
         """ 
+        
+app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'
 
 if __name__ == '__main__':
     app.debug = True

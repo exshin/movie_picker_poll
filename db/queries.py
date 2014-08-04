@@ -16,7 +16,7 @@ WHERE
 GROUP BY
 	v.movie
 ORDER BY
-	COUNT(v.id) desc
+	COUNT(DISTINCT v.user_email) desc
 """
 
 
