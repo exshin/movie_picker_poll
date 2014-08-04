@@ -20,8 +20,9 @@
 
 {% if user %}
 <div class="container">
+  <p>Logged in as : {{user.data.displayName}} </p>
   <p>{{user}}</p>
-  <p>{{user.data}}</p>
+  <p>{{user.data.name.givenName}} {{user.data.name.familyName}}</p>
 </div>
 {% endif %}
 
