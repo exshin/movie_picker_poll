@@ -48,7 +48,7 @@
 
 {% if user %}
 <div class="container">
-  <p>(Logged in as : {{user.data.displayName}})</p>
+  <p>(Logged in as : {{user}})</p>
   <p><form action="/clear_sessions"><input type="submit" value="Click to Logout"></p>
 </div>
 {% endif %}

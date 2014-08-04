@@ -26,7 +26,7 @@ authomatic = Authomatic(CONFIG, 'random secret string for session signing')
 
 @app.route('/movie_poll', methods=['GET', 'POST'])
 def login(provider_name='google'):
-    if not session.get('user_email'):
+    if not session.get('user_email') and not session.get('user_name'):
         response = make_response()
         # Authenticate the user
         result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
@@ -41,14 +41,15 @@ def login(provider_name='google'):
                     if response.status == 200:
                         pass
                 if result.user.email:
+                    session['user_name'] = result.user.data.displayName
                     session['user_email'] = result.user.email
             return render_template('movie_poll.html',
-                                user=result.user,
+                                user=session['user_name'],
                                 results=movie_results)
     else:
         movie_results = get_movie_votes()
         return render_template('movie_poll.html',
-                                user=session.get('user_email'),
+                                user=session['user_name'],
                                 results=movie_results)
     return response
 
@@ -78,7 +79,7 @@ def clear_sessions():
         <p>Logged out</p>
         <p><a href="/movie_poll">Return to Movie Poll</a></p>
         """ 
-        
+
 app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'
 
 if __name__ == '__main__':
