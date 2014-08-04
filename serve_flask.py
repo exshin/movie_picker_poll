@@ -14,8 +14,8 @@ from authomatic.providers import oauth2
 CONFIG = {
     'google': {
         'class_': oauth2.Google,
-        'consumer_key': '551144961362-9gpkff1anhr32odt4dqdi3g0lddomlru.apps.googleusercontent.com',
-        'consumer_secret': 'ewcwCAtTwKEK241zZ5BPDiT7',
+        'consumer_key': '634213859079-g48uqhs50ljkhjbuknrtobu9u68v6c37.apps.googleusercontent.com',
+        'consumer_secret': 'd7994wiYgkWmY1M23hUU4CHf',
         'scope': oauth2.Google.user_info_scope + ['https://www.googleapis.com/auth/userinfo.profile',
                                                 'https://www.googleapis.com/auth/userinfo.email'],
     },
