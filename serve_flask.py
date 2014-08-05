@@ -41,8 +41,8 @@ def login(provider_name='google'):
                     print response
             if result.user.email:
                 print result.user.data
-                session['user_name'] = result.user.data.displayName
-                session['user_email'] = result.user.email
+                session['user_name'] = result.user.data.get('displayName')
+                session['user_email'] = result.user.get('email')
         return render_template('movie_poll.html',
                             user=session['user_name'],
                             results=movie_results)
