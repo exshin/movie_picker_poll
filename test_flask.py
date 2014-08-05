@@ -42,15 +42,14 @@ def show_results():
     if request.method == 'POST':
         movie = request.form['movie']
         if movie:
-            print movie, session.get('user_email')
+            print movie, '--', session.get('user_email')
             vote(movie, session.get('user_email'))
     results = get_movie_votes()
     return render_template('results.html',results=results)
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico')
+    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico')
 
 @app.route('/watched')
 def show_watched():
@@ -65,6 +64,12 @@ def clear_sessions():
         <p>Logged out</p>
         <p><a href="/movie_poll">Return to Movie Poll</a></p>
         """ 
+
+@app.route('/test')
+def test_html():
+    # Get watched movies list
+    results = get_movie_votes()
+    return render_template('test.html',results=results)
 
 app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'
 

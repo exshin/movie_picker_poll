@@ -58,7 +58,7 @@ def show_results():
     if request.method == 'POST':
         movie = request.form['movie']
         if movie:
-            print movie, session.get('user_email')
+            print movie, '--', session.get('user_email')
             vote(movie, session.get('user_email'))
     results = get_movie_votes()
     return render_template('results.html',results=results)
