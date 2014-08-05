@@ -39,8 +39,10 @@ def login(provider_name='google'):
                 response = result.provider.access('https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
                 if response.status == 200:
                     print response
-            if result.user.email and result.user.data.name.displayName:
-                session['user_name'] = result.user.data.name.displayName
+            if result.user.email:
+                print result.user.data
+                session['user_name'] = result.user.data
+                #session['user_name'] = result.user.data.name.displayName
                 session['user_email'] = result.user.email
         return render_template('movie_poll.html',
                             user=session['user_name'],
