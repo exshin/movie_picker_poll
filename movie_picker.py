@@ -91,12 +91,14 @@ def get_movie_info(movie):
 		omdb_api_string = 'http://www.omdbapi.com/?i=&t='
 		movie_string = movie.replace(' ','%20')
 		r = requests.get(omdb_api_string+movie_string)
-		movie_info = r.json
-		#TODO: structure data into a popup window that utilizes
-		#info_sample = {u'Plot': u"After discovering her boyfriend is married, Carly soon meets the wife he's been betraying. And when yet another love affair is discovered, all three women team up to plot revenge on the three-timing S.O.B.", u'Rated': u'PG-13', u'Response': u'True', u'Language': u'English', u'Title': u'The Other Woman', u'Country': u'USA', u'Writer': u'Melissa Stack', u'Metascore': u'39', u'imdbRating': u'6.2', u'Director': u'Nick Cassavetes', u'Released': u'25 Apr 2014', u'Actors': u'Cameron Diaz, Leslie Mann, Nikolaj Coster-Waldau, Don Johnson', u'Year': u'2014', u'Genre': u'Comedy, Romance', u'Awards': u'N/A', u'Runtime': u'109 min', u'Type': u'movie', u'Poster': u'http://ia.media-imdb.com/images/M/MV5BMTc0ODE4ODY1OF5BMl5BanBnXkFtZTgwMDA5NjkzMTE@._V1_SX300.jpg', u'imdbVotes': u'32,601', u'imdbID': u'tt2203939'}
-		#Genre, Plot, Actors, imdbRating, Year, Poster, Title, Runtime
+		try:
+			movie_info = r.json()
+			test = movie_info.get('Title')
+		except:
+			movie_info = json.loads(r.content)
+		test = movie_info.get('Title')
 	except Exception as error:
-		print error
+		print error, "in get_movie_info"
 		movie_info = None
 	return movie_info
 
