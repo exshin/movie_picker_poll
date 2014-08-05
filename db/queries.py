@@ -14,6 +14,7 @@ SELECT DISTINCT
 	,d.movie_year
 	,d.actors
 	,d.poster
+	,d.imdbid
 FROM
 	votes v
 	LEFT JOIN
@@ -34,6 +35,7 @@ GROUP BY
 	,d.movie_year
 	,d.actors
 	,d.poster
+	,d.imdbid
 ORDER BY
 	COUNT(DISTINCT v.user_email) desc
 """
