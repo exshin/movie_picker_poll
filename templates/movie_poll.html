@@ -23,7 +23,9 @@
  	<span class="input-group-addon">Movie Choices</span>
     <fieldset>
         {% for row in results %}
+          <div class="radio"><label>
             <input type="radio" name="movie" value="{{row[0]}}" /> {{row[0]}} <br/>
+          </div></label>
         {% endfor %}
     </fieldset>
   <input type="submit" value="Vote!"/> 
@@ -51,6 +53,16 @@
   <!--<p><form action="/clear_sessions"><input type="submit" value="Click to Logout"></p>-->
 </div>
 {% endif %}
+
+<p></br></p>
+<p></br></p>
+<div class="container">
+  <p><a href="/results">To Results</a></p>
+</div>
+<div class="container">
+  <p><a href="/watched">To Watched Movies List</a></p>
+</div>
+
 
   <script src="./static/jquery-1.11.1.min.js"></script>
   <script src="./static/bootstrap.min.js"></script>

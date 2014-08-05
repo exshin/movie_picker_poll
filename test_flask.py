@@ -23,31 +23,15 @@ CONFIG = {
 }
 
 app = Flask(__name__)
-authomatic = Authomatic(CONFIG, 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT')
 
 @app.route('/movie_poll', methods=['GET', 'POST'])
 def login(provider_name='google'):
-    response = make_response()
-    # Authenticate the user
-    result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
     movie_results = get_movie_votes()
-    if result:
-        if result.user:
-            # Get user info
-            result.user.update()
-            # Talk to Google API
-            if result.user.credentials:
-                response = result.provider.access('https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
-                if response.status == 200:
-                    print response
-            if result.user.email:
-                print result.user.data
-                session['user_name'] = result.user.data.get('displayName')
-                session['user_email'] = result.user.email
-        return render_template('movie_poll.html',
-                            user=session['user_name'],
-                            results=movie_results)
-    return response
+    session['user_name'] = 'Eugene Chinveeraphan'
+    session['user_email'] = 'chinveeraphan@gmail.com'
+    return render_template('movie_poll.html',
+                user=session['user_name'],
+                results=movie_results)
 
 @app.route('/')
 def index():
@@ -63,16 +47,16 @@ def show_results():
     results = get_movie_votes()
     return render_template('results.html',results=results)
 
-@app.route('/watched', methods=['GET','POST'])
-def show_watched():
-    # Get watched movies list
-    watched_results = get_watched()
-    return render_template('watched.html',results=watched_results)
-
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico')
+
+@app.route('/watched')
+def show_watched():
+    # Get watched movies list
+    watched_results = get_watched()
+    return render_template('watched.html',results=watched_results)
 
 @app.route('/clear_sessions')
 def clear_sessions():

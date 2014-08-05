@@ -48,3 +48,14 @@ VALUES
 )
 """
 
+sql_get_watched = """
+SELECT DISTINCT
+	w.movie
+	,w.view_date
+	,to_char(w.view_date,'Mon')||' '||to_char(w.view_date,'dd')||' '||to_char(w.view_date,'YYYY') text_date
+FROM
+	watched_movies w
+ORDER BY
+	w.view_date desc
+"""
+
