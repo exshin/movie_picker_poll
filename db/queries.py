@@ -98,7 +98,8 @@ INSERT INTO movie_data
   poster,
   imdb_votes,
   imdbid,
-  rated
+  rated,
+  info_date
 )
 VALUES
 (
@@ -117,6 +118,7 @@ VALUES
   %s,
   %s,
   %s,
-  %s
+  %s,
+  current_date
 )
   """
