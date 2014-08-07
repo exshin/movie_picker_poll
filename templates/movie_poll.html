@@ -28,7 +28,7 @@
         {% for row in results %}
             if($(this).attr("value")=="{{row[0]}}"){
               {% if row[10] %}
-                $("#content-container").html('<table><tbody><tr><td><img src="{{row[9]}}" border="0" style="border:none;max-width:100%;" width="210" height="300" alt="{{row[0]}} Poster"/></td><td valign="top" style="padding-left: 10px;"><h4>{{row[0]}}</h4><h6>{{row[7]}}, Rated: {{row[5]}}</h6><h7>IMDB Rating: {{row[4]}}</h7></br><h7>Genres: {{row[6]}}</h7></td></tr></table></tbody> </br><p>{{row[3]}}</p><p>{{row[8]}}</p>');
+                $("#content-container").html('<table><tbody><tr><td><img src="{{row[9]}}" border="0" style="border:none;max-width:100%;" width="210" height="300" alt="{{row[0]}} Poster"/></td><td valign="top" style="padding-left: 10px;"><h2>{{row[0]}}</h2><h6>{{row[7]}}, Rated: {{row[5]}}</h6><h7>IMDB Rating: {{row[4]}}</h7></br><h7>Genres: {{row[6]}}</h7></td></tr></table></tbody> </br><p>{{row[3]}}</p><p>{{row[8]}}</p>');
               {% else %}
                 $("#content-container").html('')
               {% endif %}
