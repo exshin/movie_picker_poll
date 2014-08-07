@@ -60,9 +60,9 @@
  </form>
  </br>
  </br>
-   <form action="/results" method="POST">
-      Add New Movie Option: <input type="text" name="movie">
-      <input type="submit" value="Add!">
+   <form action="/addnew" method="POST">
+      Add New Movie Option: <input type="text" name="addmovie">
+      <input type="submit" value="Search!">
     </form>
   </td>
   <td valign="top">
@@ -72,14 +72,12 @@
   </td></tr>
   </tbody></table>
 {% else %}
-  <form action="/results" method="POST">
-    Add New Movie Option: <input type="text" name="movie">
-  <input type="submit" value="Add!">
+  <form action="/addnew" method="POST">
+    Add New Movie Option: <input type="text" name="addmovie">
+  <input type="submit" value="Search!">
   </form>
 {% endif %}
 </div>
-
-
 
 
 <p></br></p>
