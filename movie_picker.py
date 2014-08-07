@@ -31,10 +31,13 @@ def get_movie_votes():
 		results = []
 	return results
 
-def vote(movie, user_email=None):
+def vote(movie, user_email=None, imdb_id=None):
 	# write movie vote to database
 	try:
-		movie_info = get_movie_info(movie.lower())
+		if imdb_id:
+			movie_info = get_movie_info('',imdb_id=imdb_id)
+		else:
+			movie_info = get_movie_info(movie.lower())
 		print movie_info.get('Plot')
 		conn, dbCursor = connect_db()
 		dbCursor.execute(sql_write_vote,[movie,user_email])
@@ -79,6 +82,7 @@ def add_movie(movie,limit=5):
 							,movie_info.get('Genre')
 							,movie_info.get('Plot')
 							,movie_info.get('imdbRating')
+							,movie_info.get('Title')
 							])
 	return add_movie_list 
 
