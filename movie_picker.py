@@ -45,7 +45,7 @@ def vote(movie, user_email=None, imdb_id=None):
 		if movie_info:
 			movie_poster_url = get_poster(movie_info.get('imdbID'))
 			dbCursor.execute(sql_insert_movie_data,[
-				movie,
+				movie_info.get('Title'),
 				movie_info.get('Title'),
 				movie_info.get('Plot'),
 				movie_info.get('Writer'),

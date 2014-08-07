@@ -59,7 +59,7 @@ def show_results():
         movie = request.form.get('movie')
         imdb_id = request.form.get('imdb_id')
         if imdb_id:
-            print movie, '- ADD -', session.get('user_email')
+            print imdb_id, '- ADD -', session.get('user_email')
             vote('', session.get('user_email'), imdb_id)
         else:
             print movie, '- VOTE -', session.get('user_email')
