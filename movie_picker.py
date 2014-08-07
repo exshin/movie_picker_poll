@@ -6,6 +6,7 @@ from db.queries import *
 from configs.config import connStr
 from api.movie_data import get_movie_info
 from api.movie_posters import get_poster
+from api.movie_titles import get_titles
 
 def connect_db(connection='heroku_movies'):
 	# connect to database
@@ -62,6 +63,24 @@ def vote(movie, user_email=None):
 		conn.close()
 	except Exception as error:
 		print error, 'Vote Unsuccessful'
+
+def add_movie(movie,limit=10):
+	# get a list of movies and summary for user to select the correct one
+	add_movie_list = []
+	titles = get_titles(movie,limit=limit)
+	for row in titles:
+		movie_info = get_movie_info(row[0],row[1])
+		movie_poster_url = get_poster(row[1])
+		add_movie_list.append([row[0] #movie title
+							,row[1] #imdb_id
+							,movie_poster_url
+							,movie_info.get('Actors')
+							,movie_info.get('Director')
+							,movie_info.get('Genre')
+							,movie_info.get('Plot')
+							,movie_info.get('imdbRating')
+							])
+	return add_movie_list 
 
 def watched(movie):
 	# Add viewed movies to the database

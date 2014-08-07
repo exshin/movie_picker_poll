@@ -3,12 +3,17 @@
 import requests
 import json
 
-def get_movie_info(movie):
+def get_movie_info(movie, imdb_id=None):
 	# get movie info using omdb api
 	try:
-		omdb_api_string = 'http://www.omdbapi.com/?i=&t='
-		movie_string = movie.replace(' ','%20')
-		r = requests.get(omdb_api_string+movie_string)
+		if imdb_id:
+			omdb_api_string = 'http://www.omdbapi.com/?i='
+			api_string = omdb_api_string + imdb_id + '&t='
+		else:
+			omdb_api_string = 'http://www.omdbapi.com/?i=&t='
+			movie_string = movie.replace(' ','%20')
+			api_string = omdb_api_string + movie_string
+		r = requests.get(api_string)
 		try:
 			movie_info = r.json()
 			test = movie_info.get('Title')

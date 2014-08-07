@@ -58,10 +58,18 @@ def show_results():
     if request.method == 'POST':
         movie = request.form['movie']
         if movie:
-            print movie, '--', session.get('user_email')
+            print movie, '- VOTE -', session.get('user_email')
             vote(movie, session.get('user_email'))
     results = get_movie_votes()
     return render_template('results.html',results=results)
+
+@app.route('/addnew', methods=['GET','POST'])
+def add_new_movie():
+    if request.method == 'POST':
+        movie = request.form['addmovie']
+        if movie:
+            title_list = add_movie(movie)
+    return render_template('addnew.html',title_list=title_list)
 
 @app.route('/watched', methods=['GET','POST'])
 def show_watched():

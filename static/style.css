@@ -39,7 +39,14 @@ h7{
 }
 .container{
 	margin:1;
+	width: 850px;
 }
 .radio{
 	margin:1;
+}
+.wrapper{
+	margin:0;
+	text-align: left;
+	min-height: 220px;
+	vertical-align: top;
 }
