@@ -64,7 +64,7 @@ def vote(movie, user_email=None):
 	except Exception as error:
 		print error, 'Vote Unsuccessful'
 
-def add_movie(movie,limit=10):
+def add_movie(movie,limit=5):
 	# get a list of movies and summary for user to select the correct one
 	add_movie_list = []
 	titles = get_titles(movie,limit=limit)
