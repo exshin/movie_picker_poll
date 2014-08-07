@@ -40,7 +40,7 @@ def vote(movie, user_email=None, imdb_id=None):
 			movie_info = get_movie_info(movie.lower())
 		print movie_info.get('Plot')
 		conn, dbCursor = connect_db()
-		dbCursor.execute(sql_write_vote,[movie,user_email])
+		dbCursor.execute(sql_write_vote,[movie_info.get('Title'),user_email])
 		conn.commit()
 		if movie_info:
 			movie_poster_url = get_poster(movie_info.get('imdbID'))
