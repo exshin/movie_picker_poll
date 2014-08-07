@@ -1,4 +1,5 @@
 #!/usr/bin/python27
+#-*- coding: utf-8 -*-
 
 import imdb
 
@@ -11,6 +12,4 @@ def get_titles(movie, limit=10):
 	for row in results[:limit]:
 		title_list.append([row['long imdb canonical title'],'tt'+str(row.movieID)])
 	return title_list
-
-
 

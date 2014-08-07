@@ -1,4 +1,5 @@
 #!/usr/bin/python27
+#-*- coding: utf-8 -*-
 
 import os
 import requests
@@ -60,7 +61,7 @@ def show_results():
         imdb_id = request.form.get('imdb_id')
         if imdb_id:
             print imdb_id, '- ADD -', session.get('user_email')
-            vote('', session.get('user_email'), imdb_id)
+            vote('placeholder', session.get('user_email'), imdb_id)
         else:
             print movie, '- VOTE -', session.get('user_email')
             vote(movie, session.get('user_email'))
