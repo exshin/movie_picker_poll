@@ -7,7 +7,7 @@ from configs.config import connStr
 from api.movie_data import get_movie_info
 from api.movie_posters import get_poster
 from api.movie_titles import get_titles
-from utils.util import uft_fix
+from utils.util import utf_fix
 
 def connect_db(connection='heroku_movies'):
 	# connect to database
