@@ -28,7 +28,7 @@
         {% for row in results %}
             if($(this).attr("value")=="{{row[10]}}"){
               {% if row[10] %}
-                $("#content-container").html('<table><tbody><tr><td><img src="{{row[9]}}" border="0" style="border:none;max-width:100%;" width="210" height="300" alt="{{row[0]}} Poster"/></td><td valign="top" style="padding-left: 10px;"><h2>{{row[0]}}</h2><h6>{{row[7]}}, Rated: {{row[5]}}</h6><h7>IMDB Rating: {{row[4]}}</h7></br><h7>Genres: {{row[6]}}</h7></td></tr></table></tbody> </br><p>{{row[3]}}</p><p>{{row[8]}}</p>');
+                $("#content-container").html('<div id="wrapper" style="float: left;"><div style="float: left; width: 230px;"><img src="{{row[9]}}" border="0" style="border:none;max-width:100%;" width="210" height="300" alt="{{row[0]}} Poster"/></div><div style="float: left; width: 170px;"><h2>{{row[0]}}</h2><h6>{{row[7]}}, Rated: {{row[5]}}</h6><h7>IMDB Rating: {{row[4]}}</h7></br><h7>Genres: {{row[6]}}</h7></br></br></br><p>{{row[3]}}</p><p>{{row[8]}}</p></div></div> ');
               {% else %}
                 $("#content-container").html('')
               {% endif %}
@@ -46,31 +46,32 @@
 <div class="container">
 {% if results %}
 <span class="input-group-addon">Movie Choices</span>
-<table cellpadding = "5"><tbody>
-<tr><td>
- <form action="/results" method="POST">
-    <fieldset>
-        {% for row in results %}
-          <div class="radio"><label>
-            <input type="radio" name="imdb_id" value="{{row[10]}}" /> {{row[0]}} <br/>
-          </div></label>
-        {% endfor %}
-    </fieldset>
-  <input type="submit" value="Vote!"/> 
- </form>
- </br>
- </br>
-   <form action="/addnew" method="POST">
+
+<div id="wrapper" style="float: left;">
+  <div style="float: left; width: 200px;">
+   <form action="/results" method="POST">
+      <fieldset>
+          {% for row in results %}
+            <div class="radio"><label>
+              <input type="radio" name="imdb_id" value="{{row[10]}}" /> {{row[0]}} <br/>
+            </div></label>
+          {% endfor %}
+      </fieldset>
+    <input type="submit" value="Vote!"/> 
+   </form>
+   </br>
+   </br>
+    <form action="/addnew" method="POST">
       Add New Movie Option: <input type="text" name="addmovie">
       <input type="submit" value="Search!">
     </form>
-  </td>
-  <td valign="top">
+  </div>
+  <div style="float: left; width: 550px; vertical-align: top; margin: 0px">
     </br>
-    <div class="container" id="content-container" style="width:400px">
-    </div>
-  </td></tr>
-  </tbody></table>
+    <div class="container" id="content-container" style="width:525px"></div>
+  </div>
+</div>
+
 {% else %}
   <form action="/addnew" method="POST">
     Add New Movie Option: <input type="text" name="addmovie">
@@ -78,7 +79,6 @@
   </form>
 {% endif %}
 </div>
-
 
 <p></br></p>
 
