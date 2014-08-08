@@ -39,6 +39,7 @@ def vote(movie, user_email=None, imdb_id=None):
 			movie_info = get_movie_info('',imdb_id=imdb_id)
 		else:
 			movie_info = get_movie_info(movie.lower())
+		print movie_info.get('Title')
 		print movie_info.get('Plot')
 		conn, dbCursor = connect_db()
 		dbCursor.execute(sql_write_vote,[utf_fix(movie_info.get('Title')),user_email])
