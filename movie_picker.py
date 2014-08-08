@@ -7,6 +7,7 @@ from configs.config import connStr
 from api.movie_data import get_movie_info
 from api.movie_posters import get_poster
 from api.movie_titles import get_titles
+from utils.util import uft_fix
 
 def connect_db(connection='heroku_movies'):
 	# connect to database
@@ -40,19 +41,19 @@ def vote(movie, user_email=None, imdb_id=None):
 			movie_info = get_movie_info(movie.lower())
 		print movie_info.get('Plot')
 		conn, dbCursor = connect_db()
-		dbCursor.execute(sql_write_vote,[movie_info.get('Title').decode('latin-1'),user_email])
+		dbCursor.execute(sql_write_vote,[utf_fix(movie_info.get('Title')),user_email])
 		conn.commit()
 		if movie_info:
 			movie_poster_url = get_poster(movie_info.get('imdbID'))
 			dbCursor.execute(sql_insert_movie_data,[
-				movie_info.get('Title').decode('latin-1'),
-				movie_info.get('Title').decode('latin-1'),
-				movie_info.get('Plot'),
-				movie_info.get('Writer'),
+				utf_fix(movie_info.get('Title')),
+				utf_fix(movie_info.get('Title')),
+				utf_fix(movie_info.get('Plot')),
+				utf_fix(movie_info.get('Writer')),
 				movie_info.get('Metascore'),
 				movie_info.get('imdbRating'),
-				movie_info.get('Director'),
-				movie_info.get('Actors'),
+				utf_fix(movie_info.get('Director')),
+				utf_fix(movie_info.get('Actors')),
 				movie_info.get('Year'),
 				movie_info.get('Genre'),
 				movie_info.get('Awards'),
