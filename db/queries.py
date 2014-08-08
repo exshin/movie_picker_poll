@@ -27,6 +27,8 @@ WHERE
 	w.id IS NULL
 	AND
 	d.title IS NOT NULL
+	AND
+	d.poster IS NOT NULL
 GROUP BY
 	v.movie
 	,d.title
