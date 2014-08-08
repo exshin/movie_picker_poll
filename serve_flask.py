@@ -57,14 +57,15 @@ def index():
 @app.route('/results', methods=['GET','POST'])
 def show_results():
     if request.method == 'POST':
-        movie = request.form.get('movie')
+        #movie = request.form.get('movie')
         imdb_id = request.form.get('imdb_id')
         if imdb_id:
-            print imdb_id, '- ADD -', session.get('user_email')
+            print imdb_id, '- VOTE -', session.get('user_email')
             vote('placeholder', session.get('user_email'), imdb_id)
         else:
-            print movie, '- VOTE -', session.get('user_email')
-            vote(movie, session.get('user_email'))
+            #print movie, '- VOTE -', session.get('user_email')
+            #vote(movie, session.get('user_email'))
+            pass
     results = get_movie_votes()
     return render_template('results.html',results=results)
 
