@@ -37,12 +37,16 @@ def login(provider_name='google'):
 @app.route('/')
 def index():
     return 'Nothing here'
-
+    
 @app.route('/results', methods=['GET','POST'])
 def show_results():
     if request.method == 'POST':
-        movie = request.form['movie']
-        if movie:
+        movie = request.form.get('movie')
+        imdb_id = request.form.get('imdb_id')
+        if imdb_id:
+            print imdb_id, '- ADD -', session.get('user_email')
+            vote('placeholder', session.get('user_email'), imdb_id)
+        else:
             print movie, '- VOTE -', session.get('user_email')
             vote(movie, session.get('user_email'))
     results = get_movie_votes()
