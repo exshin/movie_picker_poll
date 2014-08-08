@@ -16,8 +16,8 @@
     }
 </style>
 <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
-
- <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+  <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
   <link rel="stylesheet" href="./static/style.css"></style>
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -29,7 +29,7 @@
         {% for row in results %}
             if($(this).attr("value")=="{{row[10]}}"){
               {% if row[10] %}
-                $("#content-container").html('<div id="wrapper" style="float: left;"><div style="float: left; width: 230px;"><img src="{{row[9]}}" border="0" style="border:none;max-width:100%;" width="210" height="300" alt="{{row[0]}} Poster"/></div><div style="float: left; width: 170px;"><h2>{{row[0]}}</h2><h6>{{row[7]}}, Rated: {{row[5]}}</h6><h7>IMDB Rating: {{row[4]}}</h7></br><h7>Genres: {{row[6]}}</h7></br></br></br><p>{{row[3]}}</p><p>{{row[8]}}</p></div></div> ');
+                $("#content-container").html('<div id="wrapper" style="float: left;"><div style="float: left; width: 230px;"><img src="{{row[9]}}" border="0" style="border:none;max-width:100%;" width="210" height="300" alt="{{row[0]}} Poster"/></div><div style="float: left; width: 170px;"><h2 style="margin: 0px;">{{row[0]}}</h2><h6>{{row[7]}}, Rated: {{row[5]}}</h6><h7>IMDB Rating: {{row[4]}}</h7></br><h7>Genres: {{row[6]}}</h7></br></br><p>{{row[3]}}</p><p>{{row[8]}}</p></div></div> ');
               {% else %}
                 $("#content-container").html('')
               {% endif %}
@@ -49,40 +49,40 @@
 <span class="input-group-addon">Movie Choices</span>
 
 <div id="wrapper" style="float: left;">
-  <div style="float: left; width: 200px;">
+  <div style="float: left; width: 250px;">
    <form action="/results" method="POST">
-      <fieldset>
+      <fieldset style="border: 0;">
           {% for row in results %}
             <div class="radio"><label>
               <input type="radio" name="imdb_id" value="{{row[10]}}" /> {{row[0]}} <br/>
             </div></label>
           {% endfor %}
       </fieldset>
-    <input type="submit" value="Vote!"/> 
+    <button type="submit" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-thumbs-up"></span> Vote</button>
    </form>
    </br>
    </br>
+    <p>Add New Option: </p>
     <form action="/addnew" method="POST">
-      Add New Movie Option: <input type="text" name="addmovie">
-      <input type="submit" value="Search!">
+      <input type="text" name="addmovie">
+      <button type="submit" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-search"></span> Search
+      </button>
     </form>
   </div>
   <div style="float: left; width: 550px; vertical-align: top; margin: 0px">
     </br>
-    <div class="container" id="content-container" style="width:525px"></div>
+    <div class="container" id="content-container" style="width:600px"></div>
   </div>
 </div>
 
 {% else %}
   <form action="/addnew" method="POST">
-    Add New Movie Option: <input type="text" name="addmovie">
-  <input type="submit" value="Search!">
+    Add Option: <input type="text" name="addmovie">
+  <button type="submit" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-search"></span> Search
+      </button>
   </form>
 {% endif %}
 </div>
-
-
-
 
 <p></br></p>
 

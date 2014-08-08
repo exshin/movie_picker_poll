@@ -8,6 +8,7 @@
   <title>Movie Poll!</title>
 
   <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
   <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
   <link rel="stylesheet" href="./static/style.css"></style>
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
@@ -43,7 +44,7 @@
             </label></div>
         {% endfor %}
     </fieldset>
-  <input type="submit" value="Add!"/> 
+  <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span> Add Selected</button>
  </form>
 {% else %}
 <div>
@@ -51,8 +52,6 @@
 </div>
 {% endif %}
 </div>
-
-
 
 
 <p></br></p>
