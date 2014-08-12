@@ -16,8 +16,7 @@ from authomatic.providers import oauth2
 app = Flask(__name__)
 authomatic = Authomatic(CONFIG, 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT')
 
- CONFIG = {
-    'google': {
+CONFIG = { 'google': {
         'class_': oauth2.Google,
         'consumer_key': '634213859079-hv40hf2rh5ki00mhfa8tmejepon8g2h7.apps.googleusercontent.com',
         'consumer_secret': '5DpbsTa8CTpSbC4cen6u_7h5',
