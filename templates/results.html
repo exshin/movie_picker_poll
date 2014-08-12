@@ -13,48 +13,77 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
-  <div class="container">
-    <h1 style="font-family:verdana;">Movie Poll Results</h1>
+
+  <div id="wrapper" class="container" style="width: 1080px">
+    <div>
+      <p></p></br></br></br></br></br>
+    </div>
   </div>
-  <body>
 
-<div class="container">
-{% if results %}
-  <h5 style="font-family:verdana;">Current Top Movie is....  {{results[0][0]}}</h5>
-{% else %}
-  <h4 style="font-family:verdana;">No Results yet... Oh Oh! You should vote!</h4>
-{% endif %}
-</br>
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid" style="width: 1080px;">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#"></a>
+      </div>
+      
+      <form class="navbar-form navbar-right">
+      {% if user %}
+        <div style="float: right; vertical-align: bottom;">
+          <p align="right">Logged in as : {{user}}</p>
+          <!--<p><form action="/clear_sessions"><input type="submit" value="Click to Logout"></p>-->
+        </div>
+      {% endif %}
+      </form>
 
-{% if results %}
-  <table class="table table-hover" cellpadding = '3'>
-    <tbody>
-      <tr>
-        <th>Movie</th>
-        <th>Votes</th>
-      </tr> 
-      {% for row in results %}
-      <tr>
-        <td>{{row[0]}}</td>
-        <td>{{row[1]}}</td>
-      </tr> 
-      {% endfor %}
-    </tbody>
-  </table>
-{% else %}
-  <h3></h3>
-{% endif %}
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li><a href="/movies">Movies</a></li>
+          <li class="active"><a href="/results">Results</a></li>
+          <li><a href="/watched">Watched</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+<div class="container" style="width: 1080px">
+  {% if results %}
+    <h5 style="font-family:verdana;">Current Top Movie is....  {{results[0][0]}}</h5>
+  {% else %}
+    <h4 style="font-family:verdana;">No Results yet... Oh Oh! You should vote!</h4>
+  {% endif %}
+  </br>
+
+  {% if results %}
+    <table class="table table-hover" cellpadding = '3'>
+      <tbody>
+        <tr>
+          <th>Movie</th>
+          <th>Votes</th>
+        </tr> 
+        {% for row in results %}
+        <tr>
+          <td>{{row[0]}}</td>
+          <td>{{row[1]}}</td>
+        </tr> 
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <h3></h3>
+  {% endif %}
 </div>
 
   <p></br></p>
   <p></br></p>
 
-<div class="container">
-  <p><a href="/movie_poll">To Movie Poll</a></p>
-</div>
-<div class="container">
-  <p><a href="/watched">To Watched Movies List</a></p>
-</div>
 
   <script src="./static/jquery-1.11.1.min.js"></script>
   <script src="./static/bootstrap.min.js"></script>

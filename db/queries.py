@@ -4,8 +4,8 @@
 
 sql_movie_counts = """
 SELECT DISTINCT
-	v.movie
-	,COUNT(DISTINCT v.user_email) count_votes
+	d.movie
+	,COUNT(DISTINCT my_votes.user_email) count_votes
 	,d.title
 	,d.plot
 	,d.imdbrating
@@ -16,21 +16,22 @@ SELECT DISTINCT
 	,d.poster
 	,d.imdbid
 FROM
-	votes v
+	movie_data d
 	LEFT JOIN
 	watched_movies w
-	ON v.movie = w.movie
+	ON d.movie = w.movie
 	LEFT JOIN
-	movie_data d
-	ON v.movie = d.movie
+	my_movies my_votes
+	ON my_votes.imdb_id = d.imdbid
 WHERE
 	w.id IS NULL
 	AND
 	d.title IS NOT NULL
 	AND
 	d.poster != ''
+	
 GROUP BY
-	v.movie
+	d.movie
 	,d.title
 	,d.plot
 	,d.imdbrating
@@ -41,7 +42,8 @@ GROUP BY
 	,d.poster
 	,d.imdbid
 ORDER BY
-	COUNT(DISTINCT v.user_email) desc
+	COUNT(DISTINCT my_votes.user_email) desc
+
 """
 
 sql_my_movie_counts = """
@@ -68,7 +70,7 @@ FROM
 	ON v.movie = d.movie
 	LEFT JOIN
 	my_movies my_votes
-	ON my_votes.imdb_id = d.imdbid AND my_votes.user_email = 'chinveeraphan@gmail.com'
+	ON my_votes.imdb_id = d.imdbid AND my_votes.user_email = %s
 WHERE
 	w.id IS NULL
 	AND

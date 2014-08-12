@@ -55,7 +55,7 @@ def show_results():
             print vote_list, len(vote_list)
             vote_list_update(vote_list,session.get('user_email'))
     results = get_movie_votes()
-    return render_template('results.html',results=results)
+    return render_template('results.html',results=results,user=session['user_name'])
 
 @app.route('/addnew', methods=['GET','POST'])
 def add_new_movie():
@@ -74,7 +74,7 @@ def favicon():
 def show_watched():
     # Get watched movies list
     watched_results = get_watched()
-    return render_template('watched.html',results=watched_results)
+    return render_template('watched.html',results=watched_results,user=session['user_name'])
 
 @app.route('/clear_sessions')
 def clear_sessions():

@@ -13,42 +13,18 @@ from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
 from authomatic.providers import oauth2
 
-CONFIG = {
-    'google': {
-        'class_': oauth2.Google,
-        'consumer_key': '634213859079-g48uqhs50ljkhjbuknrtobu9u68v6c37.apps.googleusercontent.com',
-        'consumer_secret': 'd7994wiYgkWmY1M23hUU4CHf',
-        'scope': oauth2.Google.user_info_scope + ['https://www.googleapis.com/auth/userinfo.profile',
-                                                'https://www.googleapis.com/auth/userinfo.email'],
-    },
-}
-
 app = Flask(__name__)
 authomatic = Authomatic(CONFIG, 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT')
 
-@app.route('/movie_poll', methods=['GET', 'POST'])
-def login(provider_name='google'):
-    response = make_response()
-    # Authenticate the user
-    result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
-    movie_results = get_movie_votes()
-    if result:
-        if result.user:
-            # Get user info
-            result.user.update()
-            # Talk to Google API
-            if result.user.credentials:
-                response = result.provider.access('https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
-                if response.status == 200:
-                    print response
-            if result.user.email:
-                print result.user.data
-                session['user_name'] = result.user.data.get('displayName')
-                session['user_email'] = result.user.email
-        return render_template('movie_poll.html',
-                            user=session['user_name'],
-                            results=movie_results)
-    return response
+ CONFIG = {
+'google': {
+    'class_': oauth2.Google,
+    'consumer_key': '634213859079-hv40hf2rh5ki00mhfa8tmejepon8g2h7.apps.googleusercontent.com',
+    'consumer_secret': '5DpbsTa8CTpSbC4cen6u_7h5',
+    'scope': oauth2.Google.user_info_scope + ['https://www.googleapis.com/auth/userinfo.profile',
+                                            'https://www.googleapis.com/auth/userinfo.email'],
+    },
+}
 
 @app.route('/')
 def index():
@@ -56,6 +32,7 @@ def index():
 
 @app.route('/movies', methods=['GET', 'POST'])
 def login_movies(provider_name='google'):
+
     response = make_response()
     # Authenticate the user
     result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
@@ -95,7 +72,7 @@ def show_results():
             print vote_list, len(vote_list)
             vote_list_update(vote_list,session.get('user_email'))
     results = get_movie_votes()
-    return render_template('results.html',results=results)
+    return render_template('results.html',results=results,user=session['user_name'])
 
 
 @app.route('/addnew', methods=['GET','POST'])
@@ -110,7 +87,7 @@ def add_new_movie():
 def show_watched():
     # Get watched movies list
     watched_results = get_watched()
-    return render_template('watched.html',results=watched_results)
+    return render_template('watched.html',results=watched_results,user=session['user_name'])
 
 @app.route('/favicon.ico')
 def favicon():
