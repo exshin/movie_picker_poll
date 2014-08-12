@@ -28,9 +28,22 @@ def get_movie_votes():
 		results = dbCursor.fetchall()
 		conn.close()
 	except Exception as error:
-		print error, 'Get Results Unsuccessful'
+		print error, ':: Get Results Unsuccessful'
 		results = []
 	return results
+
+def my_movie_votes(user_email):
+	# get movie votes within a given time frame
+	try:
+		conn,dbCursor = connect_db()
+		dbCursor.execute(sql_my_movie_counts,[user_email,])
+		results = dbCursor.fetchall()
+		conn.close()
+	except Exception as error:
+		print error, ':: Get Results Unsuccessful'
+		results = []
+	return results
+
 
 def vote(movie, user_email=None, imdb_id=None):
 	# write movie vote to database
@@ -67,7 +80,7 @@ def vote(movie, user_email=None, imdb_id=None):
 			conn.commit()
 		conn.close()
 	except Exception as error:
-		print error, 'Vote Unsuccessful'
+		print error, ':: Vote Unsuccessful'
 
 def add_movie(movie,limit=5):
 	# get a list of movies and summary for user to select the correct one
@@ -96,7 +109,7 @@ def watched(movie):
 		conn.commit()
 		conn.close()
 	except Exception as error:
-		print error, 'Add Watched Unsuccessful'
+		print error, ':: Add Watched Unsuccessful'
 
 def get_watched():
 	# Get list of watched movies
@@ -106,9 +119,29 @@ def get_watched():
 		results = dbCursor.fetchall()
 		conn.close()
 	except Exception as error:
-		print error, 'Get Watched Unsuccessful'
+		print error, ':: Get Watched Unsuccessful'
 		results = []
 	return results
 
 
+def vote_list_update(vote_list, user_email):
+	# UPDATE movie votes per user
+	try:
+		if vote_list:
+			conn, dbCursor = connect_db()
+			dbCursor.execute(sql_delete_my_movies,[user_email])
+			conn.commit()
 
+			insert_list = []
+			for imdbid in vote_list:
+				insert_list.append([user_email,imdbid,'true'])
+			args_str = ','.join(dbCursor.mogrify("(%s,%s,%s)", x) for x in insert_list)
+			insert_query = sql_insert_my_movies + args_str
+			dbCursor.execute(insert_query)
+			conn.commit()
+
+			conn.close()
+
+			print 'Vote List Update Successful'
+	except Exception as error:
+		print error, ':: Vote List Update Unsuccessful'

@@ -54,22 +54,49 @@ def login(provider_name='google'):
 def index():
     return 'Nothing here'
 
+@app.route('/movies', methods=['GET', 'POST'])
+def login_movies(provider_name='google'):
+    response = make_response()
+    # Authenticate the user
+    result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
+    if result:
+        if result.user:
+            # Get user info
+            result.user.update()
+            # Talk to Google API
+            if result.user.credentials:
+                response = result.provider.access('https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
+                if response.status == 200:
+                    print response
+            if result.user.email:
+                print result.user.data
+                session['user_name'] = result.user.data.get('displayName')
+                session['user_email'] = result.user.email
+        my_movie_results = my_movie_votes(session['user_email'])
+        return render_template('movies.html',
+                            user=session['user_name'],
+                            results=my_movie_results)
+    return response
+
 @app.route('/results', methods=['GET','POST'])
 def show_results():
     if request.method == 'POST':
-        imdb_id_add = request.form.get('imdb_id_add')
-        imdb_id_vote = request.form.get('imdb_id_vote')
-        if imdb_id_vote:
-            print imdb_id_vote, '- VOTE -', session.get('user_email')
-            vote('placeholder', session.get('user_email'), imdb_id_vote)
-        elif imdb_id_add:
-            print imdb_id_add, '- ADD -', session.get('user_email')
-            vote('placeholder', session.get('user_email'), imdb_id_add)
+        movie = request.form.get('movie')
+        imdb_id = request.form.get('imdb_id')
+        vote_list = request.form.getlist('checkbox_movie')
+        if imdb_id:
+            print imdb_id, '- ADD -', session.get('user_email')
+            vote('placeholder', session.get('user_email'), imdb_id)
+        elif imdb_id:
+            print movie, '- VOTE -', session.get('user_email')
+            vote(movie, session.get('user_email'))
         else:
-            print 'Add/Vote Failed'
-            pass
+            print 'my_movies UPDATE VOTES ', session.get('user_email')
+            print vote_list, len(vote_list)
+            vote_list_update(vote_list,session.get('user_email'))
     results = get_movie_votes()
     return render_template('results.html',results=results)
+
 
 @app.route('/addnew', methods=['GET','POST'])
 def add_new_movie():

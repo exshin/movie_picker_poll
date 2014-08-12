@@ -43,12 +43,17 @@ def show_results():
     if request.method == 'POST':
         movie = request.form.get('movie')
         imdb_id = request.form.get('imdb_id')
+        vote_list = request.form.getlist('checkbox_movie')
         if imdb_id:
             print imdb_id, '- ADD -', session.get('user_email')
             vote('placeholder', session.get('user_email'), imdb_id)
-        else:
+        elif imdb_id:
             print movie, '- VOTE -', session.get('user_email')
             vote(movie, session.get('user_email'))
+        else:
+            print 'my_movies UPDATE VOTES ', session.get('user_email')
+            print vote_list, len(vote_list)
+            vote_list_update(vote_list,session.get('user_email'))
     results = get_movie_votes()
     return render_template('results.html',results=results)
 
@@ -82,8 +87,12 @@ def clear_sessions():
 @app.route('/test')
 def test_html():
     # Get watched movies list
-    results = get_movie_votes()
-    return render_template('test.html',results=results)
+    session['user_name'] = 'Eugene Chinveeraphan'
+    session['user_email'] = 'chinveeraphan@gmail.com'
+    results = my_movie_votes(session['user_email'])
+    return render_template('test.html',
+                user=session['user_name'],
+                results=results)
 
 app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'
 

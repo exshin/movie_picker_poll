@@ -44,6 +44,52 @@ ORDER BY
 	COUNT(DISTINCT v.user_email) desc
 """
 
+sql_my_movie_counts = """
+SELECT DISTINCT
+	v.movie
+	,COUNT(DISTINCT v.user_email) count_votes
+	,d.title
+	,d.plot
+	,d.imdbrating
+	,d.rated
+	,d.genre
+	,d.movie_year
+	,d.actors
+	,d.poster
+	,d.imdbid
+	,my_votes.my_vote
+FROM
+	votes v
+	LEFT JOIN
+	watched_movies w
+	ON v.movie = w.movie
+	LEFT JOIN
+	movie_data d
+	ON v.movie = d.movie
+	LEFT JOIN
+	my_movies my_votes
+	ON my_votes.imdb_id = d.imdbid AND my_votes.user_email = 'chinveeraphan@gmail.com'
+WHERE
+	w.id IS NULL
+	AND
+	d.title IS NOT NULL
+	AND
+	d.poster != ''
+GROUP BY
+	v.movie
+	,d.title
+	,d.plot
+	,d.imdbrating
+	,d.rated
+	,d.genre
+	,d.movie_year
+	,d.actors
+	,d.poster
+	,d.imdbid
+	,my_votes.my_vote
+ORDER BY
+	COUNT(DISTINCT v.user_email) desc
+"""
 
 sql_write_vote = """
 INSERT INTO votes
@@ -126,3 +172,11 @@ VALUES
   current_date
 )
   """
+
+sql_delete_my_movies = """
+DELETE FROM my_movies WHERE user_email = %s;
+"""
+
+sql_insert_my_movies = """
+INSERT INTO my_movies (user_email,imdb_id,my_vote)
+VALUES """

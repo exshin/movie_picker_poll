@@ -48,5 +48,5 @@ def get_poster(imdb_id):
 		return poster_urls[0]
 
 	except Exception as error:
-		print error, "in get_poster"
+		print error, ":: in get_poster"
 		return ''
