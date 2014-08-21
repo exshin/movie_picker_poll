@@ -33,25 +33,31 @@ def index():
 def login_movies(provider_name='google'):
 
     response = make_response()
-    # Authenticate the user
-    result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
-    if result:
-        if result.user:
-            # Get user info
-            result.user.update()
-            # Talk to Google API
-            if result.user.credentials:
-                response = result.provider.access('https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
-                if response.status == 200:
-                    print response
-            if result.user.email:
-                print result.user.data
-                session['user_name'] = result.user.data.get('displayName')
-                session['user_email'] = result.user.email
+    if not session['user_name'] and not session['user_email']:
+        # Authenticate the user
+        result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
+        if result:
+            if result.user:
+                # Get user info
+                result.user.update()
+                # Talk to Google API
+                if result.user.credentials:
+                    response = result.provider.access('https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
+                    if response.status == 200:
+                        print response
+                if result.user.email:
+                    print result.user.data
+                    session['user_name'] = result.user.data.get('displayName')
+                    session['user_email'] = result.user.email
+            my_movie_results = my_movie_votes(session['user_email'])
+            return render_template('movies.html',
+                                user=session['user_name'],
+                                results=my_movie_results)
+    else:
         my_movie_results = my_movie_votes(session['user_email'])
         return render_template('movies.html',
-                            user=session['user_name'],
-                            results=my_movie_results)
+                                user=session['user_name'],
+                                results=my_movie_results)
     return response
 
 @app.route('/results', methods=['GET','POST'])
