@@ -25,12 +25,12 @@ CONFIG = {
 
 app = Flask(__name__)
 
-@app.route('/movie_poll', methods=['GET', 'POST'])
+@app.route('/movies', methods=['GET', 'POST'])
 def login(provider_name='google'):
     movie_results = get_movie_votes()
     session['user_name'] = 'Eugene Chinveeraphan'
     session['user_email'] = 'chinveeraphan@gmail.com'
-    return render_template('movie_poll.html',
+    return render_template('movies.html',
                 user=session['user_name'],
                 results=movie_results)
 
@@ -43,11 +43,12 @@ def show_results():
     if request.method == 'POST':
         movie = request.form.get('movie')
         imdb_id = request.form.get('imdb_id')
+        imdb_id_add = request.form.get('imdb_id_add')
         vote_list = request.form.getlist('checkbox_movie')
-        if imdb_id:
-            print imdb_id, '- ADD -', session.get('user_email')
-            vote('placeholder', session.get('user_email'), imdb_id)
-        elif imdb_id:
+        if imdb_id_add:
+            print imdb_id_add, '- ADD -', session.get('user_email')
+            vote('placeholder', session.get('user_email'), imdb_id_add)
+        elif movie:
             print movie, '- VOTE -', session.get('user_email')
             vote(movie, session.get('user_email'))
         else:
@@ -98,4 +99,4 @@ app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',port=80)

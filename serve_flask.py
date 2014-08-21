@@ -59,11 +59,12 @@ def show_results():
     if request.method == 'POST':
         movie = request.form.get('movie')
         imdb_id = request.form.get('imdb_id')
+        imdb_id_add = request.form.get('imdb_id_add')
         vote_list = request.form.getlist('checkbox_movie')
-        if imdb_id:
-            print imdb_id, '- ADD -', session.get('user_email')
-            vote('placeholder', session.get('user_email'), imdb_id)
-        elif imdb_id:
+        if imdb_id_add:
+            print imdb_id_add, '- ADD -', session.get('user_email')
+            vote('placeholder', session.get('user_email'), imdb_id_add)
+        elif movie:
             print movie, '- VOTE -', session.get('user_email')
             vote(movie, session.get('user_email'))
         else:
