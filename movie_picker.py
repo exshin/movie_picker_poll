@@ -58,26 +58,28 @@ def vote(movie, user_email=None, imdb_id=None):
 		dbCursor.execute(sql_write_vote,[utf_fix(movie_info.get('Title')),user_email])
 		conn.commit()
 		if movie_info:
-			movie_poster_url = get_poster(movie_info.get('imdbID'))
-			dbCursor.execute(sql_insert_movie_data,[
-				utf_fix(movie_info.get('Title')),
-				utf_fix(movie_info.get('Title')),
-				utf_fix(movie_info.get('Plot')),
-				utf_fix(movie_info.get('Writer')),
-				movie_info.get('Metascore'),
-				movie_info.get('imdbRating'),
-				utf_fix(movie_info.get('Director')),
-				utf_fix(movie_info.get('Actors')),
-				movie_info.get('Year'),
-				movie_info.get('Genre'),
-				movie_info.get('Awards'),
-				movie_info.get('Runtime'),
-				movie_poster_url,
-				movie_info.get('imdbVotes'),
-				movie_info.get('imdbID'),
-				movie_info.get('Rated')
-				])
-			conn.commit()
+			check_exist = dbCursor.execute(sql_check_movie_data,[movie_info.get('imdbID')])
+			if not check_exist:
+				movie_poster_url = get_poster(movie_info.get('imdbID'))
+				dbCursor.execute(sql_insert_movie_data,[
+					utf_fix(movie_info.get('Title')),
+					utf_fix(movie_info.get('Title')),
+					utf_fix(movie_info.get('Plot')),
+					utf_fix(movie_info.get('Writer')),
+					movie_info.get('Metascore'),
+					movie_info.get('imdbRating'),
+					utf_fix(movie_info.get('Director')),
+					utf_fix(movie_info.get('Actors')),
+					movie_info.get('Year'),
+					movie_info.get('Genre'),
+					movie_info.get('Awards'),
+					movie_info.get('Runtime'),
+					movie_poster_url,
+					movie_info.get('imdbVotes'),
+					movie_info.get('imdbID'),
+					movie_info.get('Rated')
+					])
+				conn.commit()
 		conn.close()
 	except Exception as error:
 		print error, ':: Vote Unsuccessful'
@@ -145,3 +147,6 @@ def vote_list_update(vote_list, user_email):
 			print 'Vote List Update Successful'
 	except Exception as error:
 		print error, ':: Vote List Update Unsuccessful'
+
+
+

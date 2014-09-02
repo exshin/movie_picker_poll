@@ -8,6 +8,7 @@ from flask import send_from_directory, session, url_for, redirect
 from datetime import datetime
 from datetime import timedelta
 from movie_picker import *
+from results_stats import get_results_stats
 
 from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
@@ -27,16 +28,26 @@ app = Flask(__name__)
 
 @app.route('/movies', methods=['GET', 'POST'])
 def login(provider_name='google'):
-    movie_results = get_movie_votes()
+    my_movie_results = my_movie_votes(session['user_email'])
     session['user_name'] = 'Eugene Chinveeraphan'
     session['user_email'] = 'chinveeraphan@gmail.com'
     return render_template('movies.html',
                 user=session['user_name'],
-                results=movie_results)
+                results=my_movie_results)
+
+@app.route('/test')
+def test_html():
+    # Get watched movies list
+    session['user_name'] = 'Eugene Chinveeraphan'
+    session['user_email'] = 'chinveeraphan@gmail.com'
+    my_movie_results = my_movie_votes(session['user_email'])
+    return render_template('test.html',
+                user=session['user_name'],
+                results=my_movie_results)
 
 @app.route('/')
 def index():
-    return 'Nothing here'
+    return redirect("/movies", code=302)
     
 @app.route('/results', methods=['GET','POST'])
 def show_results():
@@ -85,18 +96,16 @@ def clear_sessions():
         <p><a href="/movie_poll">Return to Movie Poll</a></p>
         """ 
 
-@app.route('/test')
-def test_html():
-    # Get watched movies list
-    session['user_name'] = 'Eugene Chinveeraphan'
+@app.route('/stats', methods=['GET','POST'])
+def show_results_stats():
     session['user_email'] = 'chinveeraphan@gmail.com'
-    results = my_movie_votes(session['user_email'])
-    return render_template('test.html',
-                user=session['user_name'],
-                results=results)
-
+    session['user_name'] = 'Eugene Chinveeraphan'
+    data = get_results_stats(session['user_email'])
+    return render_template('results_stats.html', user=session['user_name'])
+ 
 app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'
 
 if __name__ == '__main__':
     app.debug = True
     app.run(host='0.0.0.0',port=80)
+    url_for('data', filename='results_data.json')

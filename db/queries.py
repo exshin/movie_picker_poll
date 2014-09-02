@@ -175,6 +175,10 @@ VALUES
 )
   """
 
+sql_check_movie_data = """
+SELECT DISTINCT imdbid FROM movie_data WHERE imdbdid = %s
+"""
+
 sql_delete_my_movies = """
 DELETE FROM my_movies WHERE user_email = %s;
 """
@@ -182,3 +186,84 @@ DELETE FROM my_movies WHERE user_email = %s;
 sql_insert_my_movies = """
 INSERT INTO my_movies (user_email,imdb_id,my_vote)
 VALUES """
+
+
+
+sql_rated_stats = """
+WITH mdata AS (
+SELECT DISTINCT m.user_email, d.imdbid, d.movie, d.rated, d.genre, d.movie_year
+FROM my_movies m LEFT JOIN movie_data d ON m.imdb_id = d.imdbid
+ORDER BY m.user_email
+)
+SELECT DISTINCT
+	m.rated category
+	,SUM(CASE WHEN m.user_email = %s THEN 1 ELSE 0 END) user_total
+	,(SUM(CASE WHEN imdbid IS NOT NULL THEN 1 ELSE 0 END) + 0.0)/ t.users avg
+	,SUM(CASE WHEN imdbid IS NOT NULL THEN 1 ELSE 0 END) all_total
+FROM
+	mdata m
+	LEFT JOIN
+	(SELECT COUNT(DISTINCT user_email) users FROM mdata) t
+	ON t.users IS NOT NULL
+GROUP BY
+	m.rated,t.users
+ORDER BY
+	m.rated asc
+"""
+
+sql_year_stats = """
+WITH mdata AS (
+SELECT DISTINCT m.user_email, d.imdbid, d.movie, d.rated, d.genre, d.movie_year
+FROM my_movies m LEFT JOIN movie_data d ON m.imdb_id = d.imdbid
+ORDER BY m.user_email
+)
+SELECT DISTINCT
+	m.movie_year category
+	,SUM(CASE WHEN m.user_email = %s THEN 1 ELSE 0 END) user_total
+	,(SUM(CASE WHEN imdbid IS NOT NULL THEN 1 ELSE 0 END) + 0.0)/ t.users avg
+	,SUM(CASE WHEN imdbid IS NOT NULL THEN 1 ELSE 0 END) all_total
+FROM
+	mdata m
+	LEFT JOIN
+	(SELECT COUNT(DISTINCT user_email) users FROM mdata) t
+	ON t.users IS NOT NULL
+GROUP BY
+	m.movie_year,t.users
+ORDER BY
+	m.movie_year asc
+"""
+
+sql_imdbrating_stats = """
+WITH mdata AS (
+SELECT DISTINCT m.user_email, d.imdbid, d.movie
+	,CASE WHEN d.imdbrating::numeric < 4 THEN '0-4' 
+		WHEN d.imdbrating::numeric BETWEEN 4 AND 7 THEN '4-7' 
+		WHEN d.imdbrating::numeric BETWEEN 7 AND 8 THEN '7-8'
+		WHEN d.imdbrating::numeric BETWEEN 8 AND 9 THEN '8-9'
+		ELSE '9-10' END imdbrating 
+	, d.rated, d.genre, d.movie_year
+FROM my_movies m LEFT JOIN movie_data d ON m.imdb_id = d.imdbid
+ORDER BY m.user_email
+)
+SELECT DISTINCT
+	m.imdbrating category
+	,SUM(CASE WHEN m.user_email = %s THEN 1 ELSE 0 END) user_total
+	,(SUM(CASE WHEN imdbid IS NOT NULL THEN 1 ELSE 0 END) + 0.0)/ t.users avg
+	,SUM(CASE WHEN imdbid IS NOT NULL THEN 1 ELSE 0 END) all_total
+FROM
+	mdata m
+	LEFT JOIN
+	(SELECT COUNT(DISTINCT user_email) users FROM mdata) t
+	ON t.users IS NOT NULL
+GROUP BY
+	m.imdbrating,t.users
+ORDER BY
+	m.imdbrating asc
+"""
+
+
+sql_genre_stats = """
+SELECT DISTINCT m.user_email, d.imdbid, d.movie, d.rated, d.genre, d.movie_year
+FROM my_movies m LEFT JOIN movie_data d ON m.imdb_id = d.imdbid
+ORDER BY m.user_email
+"""

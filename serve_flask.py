@@ -27,13 +27,13 @@ authomatic = Authomatic(CONFIG, 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT')
 
 @app.route('/')
 def index():
-    return 'Nothing here'
+    return redirect("/movies", code=302)
 
 @app.route('/movies', methods=['GET', 'POST'])
 def login_movies(provider_name='google'):
 
     response = make_response()
-    if not session['user_name'] and not session['user_email']:
+    if not session['user_name'] or not session['user_email']:
         # Authenticate the user
         result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
         if result:
