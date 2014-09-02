@@ -33,7 +33,7 @@ def index():
 def login_movies(provider_name='google'):
 
     response = make_response()
-    if not session['user_name'] or not session['user_email']:
+    if not session.get('user_name') or not session.get('user_email'):
         # Authenticate the user
         result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
         if result:
