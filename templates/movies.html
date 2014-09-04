@@ -53,14 +53,14 @@
 </head>
 
 <body>
-  <div id="wrapper" class="container" style="width: 1080px">
+  <div id="wrapper" class="container" style="width: 70%">
     <div>
       <p></p></br></br></br></br>
     </div>
   </div>
 
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container-fluid" style="width: 1080px;">
+    <div class="container-fluid" style="width: 70%;">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -94,6 +94,7 @@
           <li class="active"><a href="#">Movies</a></li>
           <li><a href="/results">Results</a></li>
           <li><a href="/watched">Watched</a></li>
+          <li><a href="/stats">Vote Stats</a></li>
         </ul>
         <form class="navbar-form navbar-right" action="/addnew" method="POST" role="search">
           <div class="form-group">
@@ -106,7 +107,7 @@
     </div><!-- /.container-fluid -->
   </nav>
 
-  <div class="container" style="width: 1080px;">
+  <div class="container" style="width: 65%;">
     </br>
       <form name="checkbox_vote" action="/results" method="POST">
       {% for row in results %}
@@ -121,7 +122,7 @@
                   {% else %}
                   <input id="{{row[10]}}" type="checkbox" name="checkbox_movie" value="{{row[10]}}" style="display: none;"/>
                   {% endif %}
-                  <img src="{{row[9]}}" border="0" style="border:none;max-width:100%;" width="150" height="240" alt="{{row[0]}} Poster" title="{{row[0]}}" />
+                  <img class="posterimg" src="{{row[9]}}" style="-webkit-box-shadow: 3px 3px 3px #7C7C7C; box-shadow: 3px 3px 3px #7C7C7C;" border="0" width="150" height="240" alt="{{row[0]}} Poster" title="{{row[0]}}" />
                   {% if row[11] %}
                   <div id="checked{{row[10]}}">
                   {% else %}

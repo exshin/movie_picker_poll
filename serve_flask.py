@@ -33,7 +33,7 @@ def index():
 def login_movies(provider_name='google'):
 
     response = make_response()
-    if not session.get('user_name') or not session.get('user_email'):
+    if not session.get('user') or not session.get('user_email'):
         # Authenticate the user
         result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
         if result:
@@ -48,15 +48,16 @@ def login_movies(provider_name='google'):
                 if result.user.email:
                     print result.user.data
                     session['user_name'] = result.user.data.get('displayName')
+                    session['user'] = session['user_name'].split(' ')[0]
                     session['user_email'] = result.user.email
             my_movie_results = my_movie_votes(session['user_email'])
             return render_template('movies.html',
-                                user=session['user_name'],
+                                user=session['user'],
                                 results=my_movie_results)
     else:
         my_movie_results = my_movie_votes(session['user_email'])
         return render_template('movies.html',
-                                user=session['user_name'],
+                                user=session['user'],
                                 results=my_movie_results)
     return response
 
@@ -78,8 +79,7 @@ def show_results():
             print vote_list, len(vote_list)
             vote_list_update(vote_list,session.get('user_email'))
     results = get_movie_votes()
-    return render_template('results.html',results=results,user=session['user_name'])
-
+    return render_template('results.html',results=results,user=session['user'])
 
 @app.route('/addnew', methods=['GET','POST'])
 def add_new_movie():
@@ -89,11 +89,22 @@ def add_new_movie():
             title_list = add_movie(movie)
     return render_template('addnew.html',title_list=title_list)
 
+
 @app.route('/watched', methods=['GET','POST'])
 def show_watched():
     # Get watched movies list
     watched_results = get_watched()
-    return render_template('watched.html',results=watched_results,user=session['user_name'])
+    return render_template('watched.html',results=watched_results,user=session['user'])
+
+@app.route('/stats', methods=['GET','POST'])
+def show_results_stats():
+    if session.get('user') and session.get('user_email'):
+        bar_data, pie_data = get_results_stats(session['user_email'])
+        save_bar_results_to_csv(bar_data)
+        save_pie_results_to_csv(pie_data)
+        return render_template('results_stats.html', user=session['user'])
+    else:
+        return redirect("/movies", code=302)
 
 @app.route('/favicon.ico')
 def favicon():

@@ -31,8 +31,9 @@ def login(provider_name='google'):
     my_movie_results = my_movie_votes(session['user_email'])
     session['user_name'] = 'Eugene Chinveeraphan'
     session['user_email'] = 'chinveeraphan@gmail.com'
+    session['user'] = session['user_name'].split(' ')[0]
     return render_template('movies.html',
-                user=session['user_name'],
+                user=session['user'],
                 results=my_movie_results)
 
 @app.route('/test')
@@ -40,9 +41,10 @@ def test_html():
     # Get watched movies list
     session['user_name'] = 'Eugene Chinveeraphan'
     session['user_email'] = 'chinveeraphan@gmail.com'
+    session['user'] = session['user_name'].split(' ')[0]
     my_movie_results = my_movie_votes(session['user_email'])
     return render_template('test.html',
-                user=session['user_name'],
+                user=session['user'],
                 results=my_movie_results)
 
 @app.route('/')
@@ -67,7 +69,7 @@ def show_results():
             print vote_list, len(vote_list)
             vote_list_update(vote_list,session.get('user_email'))
     results = get_movie_votes()
-    return render_template('results.html',results=results,user=session['user_name'])
+    return render_template('results.html',results=results,user=session['user'])
 
 @app.route('/addnew', methods=['GET','POST'])
 def add_new_movie():
@@ -77,16 +79,26 @@ def add_new_movie():
             title_list = add_movie(movie)
     return render_template('addnew.html',title_list=title_list)
 
+@app.route('/watched')
+def show_watched():
+    # Get watched movies list
+    watched_results = get_watched()
+    return render_template('watched.html',results=watched_results,user=session['user'])
+
+@app.route('/stats', methods=['GET','POST'])
+def show_results_stats():
+    session['user_email'] = 'chinveeraphan@gmail.com'
+    session['user_name'] = 'Eugene Chinveeraphan'
+    session['user'] = session['user_name'].split(' ')[0]
+    bar_data, pie_data = get_results_stats(session['user_email'])
+    save_bar_results_to_csv(bar_data)
+    save_pie_results_to_csv(pie_data)
+    return render_template('results_stats.html', user=session['user'])
 
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico')
 
-@app.route('/watched')
-def show_watched():
-    # Get watched movies list
-    watched_results = get_watched()
-    return render_template('watched.html',results=watched_results,user=session['user_name'])
 
 @app.route('/clear_sessions')
 def clear_sessions():
@@ -95,15 +107,6 @@ def clear_sessions():
         <p>Logged out</p>
         <p><a href="/movie_poll">Return to Movie Poll</a></p>
         """ 
-
-@app.route('/stats', methods=['GET','POST'])
-def show_results_stats():
-    session['user_email'] = 'chinveeraphan@gmail.com'
-    session['user_name'] = 'Eugene Chinveeraphan'
-    bar_data, pie_data = get_results_stats(session['user_email'])
-    save_bar_results_to_csv(bar_data)
-    save_pie_results_to_csv(pie_data)
-    return render_template('results_stats.html', user=session['user_name'])
  
 app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'
 
