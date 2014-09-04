@@ -8,7 +8,7 @@ from flask import send_from_directory, session, url_for, redirect
 from datetime import datetime
 from datetime import timedelta
 from movie_picker import *
-from results_stats import get_results_stats
+from results_stats import get_results_stats, save_bar_results_to_csv, save_pie_results_to_csv
 
 from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
@@ -100,7 +100,9 @@ def clear_sessions():
 def show_results_stats():
     session['user_email'] = 'chinveeraphan@gmail.com'
     session['user_name'] = 'Eugene Chinveeraphan'
-    data = get_results_stats(session['user_email'])
+    bar_data, pie_data = get_results_stats(session['user_email'])
+    save_bar_results_to_csv(bar_data)
+    save_pie_results_to_csv(pie_data)
     return render_template('results_stats.html', user=session['user_name'])
  
 app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'

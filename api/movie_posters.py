@@ -13,7 +13,10 @@ def get_poster(imdb_id):
 		 
 		url = CONFIG_PATTERN.format(key=KEY)
 		r = requests.get(url)
-		config = r.json()
+		try:
+			config = r.json()
+		except:
+			config = r.json
 
 		base_url = config['images']['base_url']
 		sizes = config['images']['poster_sizes']
@@ -27,7 +30,10 @@ def get_poster(imdb_id):
 
 		IMG_PATTERN = 'http://api.themoviedb.org/3/movie/{imdbid}/images?api_key={key}' 
 		r = requests.get(IMG_PATTERN.format(key=KEY,imdbid=imdb_id))
-		api_response = r.json()
+		try:
+			api_response = r.json()
+		except:
+			api_response = r.json
 
 		posters = api_response['posters']
 		poster_urls = []

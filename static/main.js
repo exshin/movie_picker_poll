@@ -18,14 +18,14 @@ var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
 
-var yAxisOptions = ["Rated","Years","Score","Genre"];
-var current_selection = "Genre";
+var yAxisOptions = ["Rated","Years","Rating","Genre"];
+var current_selection = "Rated";
 var groupOptions = ["Your_Votes","Average_Votes"];
 var current_group = "Your_Votes";
 var file_name = "/static/data/"+current_selection+".csv";
 
 var color = d3.scale.ordinal()
-    .range(["#98abc5", "#8a89a6"]);
+    .range(["rgba(11,94,215,.8)", "rgba(245, 143, 8, 0.8)"]);
 
 var tip = d3.tip()
     .attr('class', 'd3-tip')
@@ -34,7 +34,7 @@ var tip = d3.tip()
       return "<strong>Votes:</strong> <span style='color:red'>" + d.value + "</span>";
     });
 
-var svg = d3.select("#chart").append("svg")
+var svg = d3.select("#barchart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -82,10 +82,10 @@ d3.csv(file_name, function(error, data) {
   var category = svg.selectAll(".category")
       .data(data)
     .enter().append("g")
-      .attr("class", "g")
+      .attr("class", "bar")
       .attr("transform", function(d) { return "translate(" + x0(d.Category) + ",0)"; });
 
-  category.selectAll("rect")
+  var bars = category.selectAll("rect")
       .data(function(d) { return d.votes; })
     .enter().append("rect")
       .attr("class", "rect")
@@ -118,28 +118,33 @@ d3.csv(file_name, function(error, data) {
       .style("text-anchor", "end")
       .text(function(d) { return d; });
 
-
 	// Build menus
-	d3.select('#y-axis-menu')
-		.selectAll('li')
+	d3.select('#y-axis-menu-bar')
+		.selectAll('button')
 		.data(yAxisOptions)
 		.enter()
-		.append('li')
+		.append('button')
 		.text(function(d) {return d;})
-		.classed('selected', function(d) {
+		.classed('btn-primary', function(d) {
 			return d === current_selection;
 		})
 		.on('click', function(d) {
 			current_selection = d;
+			svg.selectAll("rect").data([]).exit().remove();
 			file_name = "/static/data/" + d + ".csv";
 			updateChart(file_name);
 			updateMenus();
+			legend.append("rect")
+		      .attr("x", width - 18)
+		      .attr("width", 18)
+		      .attr("height", 18)
+		      .style("fill", color);
 		});
 
 	function updateMenus() {
-		d3.select('#y-axis-menu')
-		  .selectAll('li')
-		  .classed('selected', function(d) {
+		d3.select('#y-axis-menu-bar')
+		  .selectAll('button')
+		  .classed('btn-primary', function(d) {
 			return d === current_selection;
 		})
 		d3.select('#group-menu')
@@ -151,18 +156,20 @@ d3.csv(file_name, function(error, data) {
 
 	function updateChart(file_name) {
 
+		var data_new = [];
 		d3.csv(file_name, function(error, data) {
 			var voteNames = d3.keys(data[0]).filter(function(key) { return key !== "Category"; });
 			data.forEach(function(d) {
-			    d.votes = voteNames.map(function(name) { return {name: name, value: +d[name]}; });
+			    d.votes = voteNames.map(function(name) { return {name: name, value: +d[name]}; })
+			    data_new.push(voteNames.map(function(name) { return {name: name, value: +d[name]}; }));
 		});
 
 		console.log(data)
+		console.log(data_new)
 
 		x0.domain(data.map(function(d) { return d.Category; }));
 		x1.domain(voteNames).rangeRoundBands([0, x0.rangeBand()]);
 		y.domain([0.0, d3.max(data, function(d) { return d3.max(d.votes, function(d) { return d.value; }); })]);
-
 
 		//Update x-axis
 		svg.select(".x.axis")
@@ -181,56 +188,34 @@ d3.csv(file_name, function(error, data) {
 			.duration(500)
 			.call(yAxis);
 
-		//Select…
-		var bars = svg.selectAll(".category")
-			.data(data, function(d) { return d.votes; });
+		 //filling chart with data (multiple)    
+	    var category_remove = svg.selectAll(".category")
+	      	.data(data)
+	    	.exit().remove();
 
-		console.log(data);
-		console.log(data, function(d) { return d.votes; });
+	    category_remove.selectAll("rect")
+	     	.data(function(d) { return d.votes; })
+	     	.exit().remove();
 
-		//Enter…
-		bars.enter()
-			.append("rect")
-			.attr("class", "rect")
-			.attr("x", function(d) { return x1(d.name); })
-		    .attr("width", x1.rangeBand())
-		    .attr("y", function(d) { return y(d.value); })
-		    .attr("height", function(d) { return height - y(d.value); })
-		    .style("fill", function(d) { return color(d.name); })
-		    .on('mouseover', tip.show)
-      		.on('mouseout', tip.hide);
-
-		//Update…
-		bars.transition()
-			.duration(500)
-			.attr("x", function(d) { return x1(d.name); })
-			.attr("y", function(d) { return y(d.value); })
-			.attr("width", x1.rangeBand())
-			.attr("height", function(d) { return y(d.value); });
-
-		//Exit…
-		bars.exit()
-			.transition().duration(500)
-			.attr("x", -x1.rangeBand())
-			.remove();
-
-		var category = svg.selectAll(".category")
+		 //filling chart with data (multiple)    
+	    var category = svg.selectAll(".category")
 	      .data(data)
-	      .transition().duration(500)
+	    .enter().append("g")
+	      .attr("class", "g")
 	      .attr("transform", function(d) { return "translate(" + x0(d.Category) + ",0)"; });
-
-	    console.log(category);
-	    console.log(category.data);
 
 	    category.selectAll("rect")
 	      .data(function(d) { return d.votes; })
-	      .transition().duration(500)
-	      .attr("class", "rect")
+	    .enter().append("rect")
 	      .attr("x", function(d) { return x1(d.name); })
 	      .attr("width", x1.rangeBand())
 	      .attr("y", function(d) { return y(d.value); })
 	      .attr("height", function(d) { return height - y(d.value); })
-	      .style("fill", function(d) { return color(d.name); });
+	      .style("fill", function(d) { return color(d.name); })
+	      .on('mouseover', tip.show)
+	      .on('mouseout', tip.hide);
+
+
 		  });
 		}
 	});

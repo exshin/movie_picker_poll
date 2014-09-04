@@ -64,8 +64,8 @@ background: url(overstate.png);
 background: url(downstate.png);
 }
 
-.actions, .chart {
-    margin: 15px auto;
+.actions, .chart 
+{    margin: 15px auto;
     width: 34px;
 }
 button {
@@ -93,4 +93,6 @@ button:active {
     color: #000000;
 }
 
-
+.arc path {
+  stroke: #fff;
+}

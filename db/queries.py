@@ -176,7 +176,7 @@ VALUES
   """
 
 sql_check_movie_data = """
-SELECT DISTINCT imdbid FROM movie_data WHERE imdbdid = %s
+SELECT DISTINCT imdbid FROM movie_data WHERE imdbid = %s
 """
 
 sql_delete_my_movies = """

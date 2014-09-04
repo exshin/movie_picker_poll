@@ -9,7 +9,6 @@
  <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
   <link rel="stylesheet" href="./static/style.css">
   <link rel="stylesheet" href="./static/svg.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
@@ -60,22 +59,32 @@
 
     <div id="wrapper">
       <div id="menu">
-        <ul id="y-axis-menu"></ul>
+        <ul id="y-axis-menu-bar"></ul>
       </div>
-      <div id="chart"></div>
+      <div id="barchart"></div>
     </div>
-    
+    </br>
+    <!--
+    <div id="wrapper">
+      <div id="menu-pie">
+        <ul id="y-axis-menu-pie"></ul>
+      </div>
+      <div id="piechart"></div>
+    </div>
+    -->
       
   <p></br></p>
   <p></br></p>
 
   <script src="./static/jquery-1.11.1.min.js"></script>
   <script src="./static/bootstrap.min.js"></script>
+  <script src="./static/bootstrap.min.css"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script src="./static/underscore-min.js"></script>
   <script src="./static/d3.tip.min.js"></script>
   <script src="./static/main.js"></script>
+  <!--<script src="./static/piechart.js"></script>-->
 
   </body>
 </html>
