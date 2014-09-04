@@ -12,6 +12,7 @@ def get_results_stats(user_email):
 	# get results info
 	try:
 		bar_data = {}
+		pie_data = {}
 		conn = connect(connStr['heroku_movies'])
 		dbCursor = conn.cursor(cursor_factory=extras.DictCursor)
 
@@ -46,7 +47,6 @@ def get_results_stats(user_email):
 			'avg': avgs
 		}
 
-		pie_data = {}
 		genre_pie_data= []
 		for n in range(0,len(genre_keys)):
 			genre_pie_data.append([genre_keys[n],user_total[n],0,genre_total[n]])

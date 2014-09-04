@@ -103,7 +103,7 @@ def show_results_stats():
     if session.get('user') and session.get('user_email'):
         bar_data, pie_data = get_results_stats(session['user_email'])
         save_bar_results_to_csv(bar_data)
-        save_pie_results_to_csv(pie_data)
+        #save_pie_results_to_csv(pie_data) //not ready yet
         return render_template('results_stats.html', user=session['user'])
     else:
         return redirect("/movies", code=302)
