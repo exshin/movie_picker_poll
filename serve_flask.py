@@ -8,6 +8,8 @@ from flask import send_from_directory, session, url_for, redirect
 from datetime import datetime
 from datetime import timedelta
 from movie_picker import *
+from results_stats import get_results_stats, save_bar_results_to_csv, save_pie_results_to_csv
+
 
 from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
