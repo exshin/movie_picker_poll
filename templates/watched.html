@@ -13,11 +13,6 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
-  <div id="wrapper" class="container" style="width: 70%">
-    <div>
-      <p></p></br></br></br></br></br>
-    </div>
-  </div>
 
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid" style="width: 70%;">
@@ -29,26 +24,24 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#"></a>
-      </div>
-      
-      <form class="navbar-form navbar-right">
-      {% if user %}
-        <div style="float: right; vertical-align: bottom;">
-          <p align="right">Logged in as : {{user}}</p>
-          <!--<p><form action="/clear_sessions"><input type="submit" value="Click to Logout"></p>-->
-        </div>
-      {% endif %}
-      </form>
+      </div><!-- /navbar-header -->
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li><a href="/movies">Movies</a></li>
-          <li><a href="/results">Results</a></li>
-          <li class="active"><a href="/watched">Watched</a></li>
-          <li><a href="/stats">Vote Stats</a></li>
-        </ul>
+        <div class="navbar-form navbar-left" style="margin: 0px; width: 100%;">
+          <ul class="nav navbar-nav" style="margin: 0px; width: 100%;">
+            <li><a href="/movies">Movies</a></li>
+            <li><a href="/results">Results</a></li>
+            <li class="active"><a href="/watched">Watched</a></li>
+            <li><a href="/stats">Stats</a></li>
+            <div class="navbar-form navbar-right">
+              {% if user %}
+                <p style="vertical-align: top">Signed in as {{user}}</p>
+                <!--<p><form action="/clear_sessions"><input type="submit" value="Click to Logout"></p>-->
+              {% endif %}
+            </div>
+          </ul>
+        </div>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
