@@ -96,5 +96,4 @@ button:active {
     text-align: center;
 }
 
-.navbar-nav > li > a {padding-top:5px !important; padding-bottom:5px !important;}
-.navbar {min-height:32px !important}
+@media (min-width: 981px) { body { padding-top: 60px; } } 
