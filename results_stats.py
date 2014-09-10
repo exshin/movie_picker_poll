@@ -7,6 +7,7 @@ import csv
 from psycopg2 import connect, extras
 from db.queries import *
 from configs.config import connStr
+from utils.counter import Counter
 
 def get_results_stats(user_email):
 	# get results info
@@ -63,7 +64,7 @@ def get_results_stats(user_email):
 def calculate_frequencies(data):
 	# calculate frequencies of given data set
 	if data:
-		freq = collections.Counter(data)
+		freq = Counter(data)
 		freq =  dict(freq)
 		return freq
 	else:

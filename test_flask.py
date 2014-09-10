@@ -3,7 +3,7 @@
 
 import os
 import requests
-from flask import Flask, make_response, render_template, request
+from flask import Flask, make_response, render_template, request, jsonify
 from flask import send_from_directory, session, url_for, redirect
 from datetime import datetime
 from datetime import timedelta
@@ -28,24 +28,57 @@ app = Flask(__name__)
 
 @app.route('/movies', methods=['GET', 'POST'])
 def login(provider_name='google'):
-    my_movie_results = my_movie_votes(session['user_email'])
     session['user_name'] = 'Eugene Chinveeraphan'
     session['user_email'] = 'chinveeraphan@gmail.com'
     session['user'] = session['user_name'].split(' ')[0]
+    my_movie_results = my_movie_votes(session['user_email'])
     return render_template('movies.html',
                 user=session['user'],
                 results=my_movie_results)
 
-@app.route('/test')
+
+
+@app.route('/test', methods=['GET'])
 def test_html():
-    # Get watched movies list
+    # TESTING new features/ UI
     session['user_name'] = 'Eugene Chinveeraphan'
     session['user_email'] = 'chinveeraphan@gmail.com'
+    session['profile_image_url'] = 'https://lh5.googleusercontent.com/-gLFJEhiapWU/AAAAAAAAAAI/AAAAAAAAAlA/m3J840QcgKc/photo.jpg?sz=50'
     session['user'] = session['user_name'].split(' ')[0]
     my_movie_results = my_movie_votes(session['user_email'])
+    my_votes = []
+    for row in my_movie_results:
+        if row[11]:
+            my_votes.append(row[10])
     return render_template('test.html',
                 user=session['user'],
-                results=my_movie_results)
+                user_pic=session['profile_image_url'],
+                results=my_movie_results,
+                my_votes=my_votes)
+
+@app.route('/voteclick/', methods=['GET'])
+def voteclick():
+    # TESTING new features/ UI
+    ret_data = {"value": request.args.get('vote_imdbID')}
+    imdbID = str(request.args.get('vote_imdbID'))
+    logic = str(request.args.get('vote_logic'))
+    print session['user_email'], logic.title(), imdbID
+    if logic == 'vote':
+        # query insert
+        print 'insert'
+    else:
+        # query remove
+        print 'remove'
+    # query new my_votes
+    return jsonify(ret_data)
+
+@app.route('/watchedclick/', methods=['GET'])
+def watchedclick():
+    # TESTING new features/ UI
+    ret_data = {"value": request.args.get('watched_imdbID')}
+    imdbID = str(request.args.get('watched_imdbID'))
+    print session['user_email'], 'Watched', imdbID
+    return jsonify(ret_data)
 
 @app.route('/')
 def index():
@@ -105,7 +138,15 @@ def clear_sessions():
     session.clear()
     return """
         <p>Logged out</p>
-        <p><a href="/movie_poll">Return to Movie Poll</a></p>
+        <p><a href="/movies">Return to Movie Poll</a></p>
+        """ 
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return """
+        <p>Logged out</p>
+        <p><a href="/test">Return to Home</a></p>
         """ 
  
 app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'

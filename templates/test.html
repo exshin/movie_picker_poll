@@ -6,61 +6,111 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=500, initial-scale=1">
 
-<title>Movie Poll!</title>
+  <title>Movie Poll!</title>
 
-<style type="text/css">
-    .box{
-        padding: 20px;
-        display: none;
-        margin-top: 20px;
-        border: 1px solid #000;
-    }
-    .containerdiv { float: left; position: relative; } 
-    .cornerimage { position: absolute; top: 0; left: 0; } 
+  <style type="text/css">
+      .box{
+          padding: 20px;
+          display: none;
+          margin-top: 20px;
+          border: 1px solid #000;
+      }
+      .containerdiv { float: left; position: relative; } 
+      .cornerimage { position: absolute; top: 0; left: 0; } 
+
 </style>
-<script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
   <link rel="stylesheet" href="./static/style.css"></style>
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script type=text/javascript src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 
   <script type="text/javascript">
-    $(document).ready(function(){
-      {% for row in results %}
-        $('#{{row[10]}}').click(function () {
-          $("#checked{{row[10]}}").toggle(this.checked);
-        });
-      {% endfor %}
-      $("input:checkbox").change(function() {
-        var someObj = {};
-        someObj.voted = [];
-        someObj.unvoted = [];
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    var my_votes = {{my_votes|tojson|safe}}
 
-        $("input:checkbox").each(function() {
-            if ($(this).is(":checked")) {
-                someObj.voted.push($(this).attr("id"));
-            } else {
-                someObj.unvoted.push($(this).attr("id"));
+    $( document ).ready(function(){
+      $(".container").on('click','.voteBtn',function(e) {
+        var current_vote_imdbID = e.currentTarget.previousElementSibling.attributes.value.value
+        console.log(current_vote_imdbID);
+        var check_array = $.inArray(current_vote_imdbID, my_votes);
+        var vote_logic
+        if(check_array > -1) {
+          // User wants to unvote. Hide Heart.
+          console.log("Unvote")
+          vote_logic = 'unvote'
+          // Remove current_vote_imdbID from my_votes list
+        }
+        else {
+          // User wants to vote. Show Heart.
+          console.log("Vote")
+          vote_logic = 'vote'
+          // Add current_vote_imdbID to my_votes list
+        };
+        $.ajax({
+            type: "GET",
+            url: $SCRIPT_ROOT + "/voteclick/",
+            contentType: "application/json; charset=utf-8",
+            data: { vote_imdbID: $('input[name="vote_imdbID"]').val(),
+                    vote_logic: vote_logic },
+            success: function(data) {
+                $('#testresult').text(data.value);
             }
         });
-        console.log(someObj.voted)
-        console.log(someObj.unvoted)
       });
     });
+
+    $( document ).ready(function(){
+      $(".container").on('click','.watchedBtn',function(e) {
+        console.log(e.currentTarget.previousElementSibling.attributes.value.value);
+        $.ajax({
+            type: "GET",
+            url: $SCRIPT_ROOT + "/watchedclick/",
+            contentType: "application/json; charset=utf-8",
+            data: { watched_imdbID: $('input[name="watched_imdbID"]').val() },
+            success: function(data) {
+                $('#testresult').text(data.value);
+            }
+        });     
+      });
+    });
+
+    $( document ).ready(function() {
+    var originalLeave = $.fn.popover.Constructor.prototype.leave;
+    $.fn.popover.Constructor.prototype.leave = function(obj){
+      var self = obj instanceof this.constructor ?
+        obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
+      var container, timeout;
+
+      originalLeave.call(this, obj);
+
+      if(obj.currentTarget) {
+        container = $(obj.currentTarget).siblings('.popover')
+        timeout = self.timeout;
+        container.one('mouseenter', function(){
+          //We entered the actual popover – call off the dogs
+          clearTimeout(timeout);
+          //Let's monitor popover content instead
+          container.one('mouseleave', function(){
+            $.fn.popover.Constructor.prototype.leave.call(self, self);
+          });
+        })
+      }
+    };
+
+    $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 30}});
+    });
+
   </script>
 </head>
 
-<body>
-  <div id="wrapper" class="container" style="width: 1080px">
-    <div>
-      <p></p></br></br></br></br>
-    </div>
-  </div>
-
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container-fluid" style="width: 1080px;">
+    <div class="container-fluid" style="width: 60%;">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -69,84 +119,84 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#"></a>
-      </div>
-      
-      <form class="navbar-form navbar-right">
-      {% if user %}
-        <div style="float: right; vertical-align: bottom;">
-          <p align="right">Logged in as : {{user}}</p>
-          <!--<p><form action="/clear_sessions"><input type="submit" value="Click to Logout"></p>-->
-        </div>
-      {% endif %}
-      </form>
-
-      <form class="navbar-form navbar-right">
-        <div class="form-group">
-          <button id="update_button" type="submit" class="btn btn-small btn-success" onclick="document.checkbox_vote.submit();return false;"><i class="fa fa-check"></i> Update Selection
-          </button>
-        </div>
-      </form>
+      </div><!-- /navbar-header -->
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Movies</a></li>
-          <li><a href="/results">Results</a></li>
-          <li><a href="/watched">Watched</a></li>
-        </ul>
-        <form class="navbar-form navbar-right" action="/addnew" method="POST" role="search">
-          <div class="form-group">
-            <input type="text" class="form-control" name="addmovie" placeholder="Add New Movie">
-          <button type="submit" class="btn btn-default btn-primary"><i class="fa fa-search"></i>
-          </button></div>
-        </form>
+        <div class="navbar-form navbar-left" style="margin: 0px; width: 100%;">
+          <ul class="nav navbar-nav" style="margin: 0px; width: 100%;">
+            <li class="active"><a href="#"><i class="fa fa-film fa-2x"></i><br/>Movies</a></li>
+            <li><a href="/results"><i class="fa fa-heart fa-2x"></i><br/>Results</a></li>
+            <li><a href="/watched"><i class="fa fa-flag fa-2x"></i><br/>Watched</a></li>
+            <li><a href="/stats"><i class="fa fa-bar-chart-o fa-2x"></i><br/>Stats</a></li>
 
+            <div class="navbar-form navbar-right" style="margin-top: 0px; margin-bottom: 0px;">
+            {% if user %}
+              <ul class="nav navbar-nav">
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    {{user}}<img class="profilepic" src="{{user_pic}}" border=none width="35" height="35" style="margin-left: 10px; margin-top: 5px;" />
+                    <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="/profile">Profile</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                  </ul>
+                    <!--<p><form action="/clear_sessions"><input type="submit" value="Click to Logout"></p>-->
+            {% endif %}
+            </div>
+
+            <form class="navbar-form navbar-right" action="/addnew" method="POST" role="search">
+              <div class="form-group">
+                <input type="text" class="form-control" name="addmovie" style="float: left; width: 70%" placeholder="Add New Movie">
+              <button type="submit" class="btn btn-default btn-primary" style="width: 15%; margin-top: 4px;"><i class="fa fa-search"></i>
+              </button></div>
+            </form>
+
+          </ul>
+        </div>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
 
-  <div class="container" style="width: 1080px;">
+<body style="margin-top: 60px;">
+  <div class="container" style="width: 55%;">
     </br>
-      <form name="checkbox_vote" action="/results" method="POST">
-      {% for row in results %}
-        <div style="float: left; width: 340px; margin: 1px;">
-          <div id="wrapper" style="float: left;">
-
-            <div style="float: left; width: 160px;">
-              <label for="{{row[10]}}">
-                <div class="containerdiv">
-                  {% if row[11] == 1 %}
-                  <input id="{{row[10]}}" type="checkbox" name="checkbox_movie" value="{{row[10]}}" style="display: none;" checked/>
-                  {% else %}
-                  <input id="{{row[10]}}" type="checkbox" name="checkbox_movie" value="{{row[10]}}" style="display: none;"/>
-                  {% endif %}
-                  <img src="{{row[9]}}" border="0" style="border:none;max-width:100%;" width="150" height="240" alt="{{row[0]}} Poster" title="{{row[0]}}" />
-                  {% if row[11] %}
-                  <div id="checked{{row[10]}}">
-                  {% else %}
-                  <div id="checked{{row[10]}}" style="display: none;">
-                  {% endif %}
-                    <img class="cornerimage" border="0" src="http://www.greenrevolutionems.com/wp-content/uploads/2013/04/check-mark-11-512-300x300.png" alt="" width="75" height="75">
-                  </div>
-                </div>
-              </label>
+    <strong><div id='testresult'></div></strong>
+    {% for row in results %}
+      <div id="movie-container" style="float: left; width: 200px; height: 330px; margin: 0px;">
+        <div id="wrapper" style="float: left; background-color:white">
+          <div id='poster-container' style="-webkit-box-shadow: 3px 3px 3px #7C7C7C; box-shadow: 3px 3px 3px #7C7C7C; width: 180px;">
+            <div style="margin-top: 2px;">
+              <button style="width: 175px; border: none; padding: 0px; background: none; margin-top: 2px;" data-placement="right" data-popover="true" data-html=true data-content="<div style='float: left; width: 200px;'>
+                            <h2 style='margin: 0px;'>{{row[0]}}</h2>
+                            <h4>{{row[7]}}, Rated: {{row[5]}}</h4>
+                            <h7>IMDB Rating: {{row[4]}}</h7>
+                            <br></br>
+                            <h7>Genres: {{row[6]}}</h7>
+                            <br></br>
+                            <h7>{{row[3]}}</h7>
+                            <br></br>
+                            <h7>Cast: {{row[8]}}</h7>
+                            <br></br>
+                          </div>
+              <div style='margin-bottom: 10px;'>
+              <div style='float: left;'>
+              <input type='hidden' name='vote_imdbID' id='vote_imdbID' value='{{row[10]}}'></input>
+              <button type='button' class='btn btn-danger voteBtn' name='voteBtn' id='voteBtn' style='width: 40px;'><i class='fa fa-heart'></i></button></div>
+              <div style='float: left; margin-bottom: 10px'>
+              <input type='hidden' name='watched_imdbID' id='watched_imdbID' value='{{row[10]}}'></input>
+              <button type='button' class='btn btn-primary watchedBtn' style='width: 40px;'><i class='fa fa-flag'></i></button></div>">
+              <img class="posterimg" src="{{row[9]}}" border=none width="175" height="250"></img></button>
             </div>
-
-            <div style="float: left; width: 160px;">
-              <h2 style="margin: 0px;">{{row[0]}}</h2>
-              <h6>{{row[7]}}, Rated: {{row[5]}}</h6>
-              <h7>IMDB Rating: {{row[4]}}</h7>
-              </br>
-              <h7>Genres: {{row[6]}}</h7>
-              </br></br>
-              <h7>{{row[3]}}</h7>
-            </div>   
-
+            <div>
+              <p style="margin-bottom: 0px; padding-top: 8px"><a href="http://imdb.com/title/{{row[10]}}/" target="blank">{{row[0]}}</a></p> 
+              <h6 style="margin-top: 0px; padding-bottom: 10px">IMDB Rating: {{row[4]}}</h6>
+            </div>
           </div>
         </div>
-      {% endfor %}
-    </form>
+      </div>
+    {% endfor %}
   </div>
 
   <p></br></p>
@@ -158,3 +208,4 @@
 
 </body>
 </html>
+

@@ -1,40 +1,40 @@
-body{
-	font-family:helvetica, sans-serif;
-	font-size:1.1em;
+body {
+  font-size: 1.1em;
+  background-color: #F6F8F9;
 }
 h1{
 	color:#a7a7a7;
-	font-size:24px;
+	font-size:18px;
 	padding:0px;
 }
 h2{
 	color:#000000;
-	font-size:18px;
-	padding:0px;
-}
-h3{
-	color:#a7a7a7;
 	font-size:16px;
 	padding:0px;
 }
+h3{
+	color:#000000;
+	font-size:14px;
+	padding:0px;
+}
 h4{
-	color:#a7a7a7;
+	color:#000000;
 	font-size:14px;
 	padding:0px;
 }
 h5{
-	color:#a7a7a7;
+	color:#000000;
 	font-size:12px;
 	padding:0px;
 }
 h6{
-	color:#a7a7a7;
+	color:#000000;
 	font-size:11px;
 	padding:0px;
 }
 h7{
 	color:#808080;
-	font-size:10px;
+	font-size:11px;
 	padding:0px;
 }
 .container{
@@ -92,9 +92,9 @@ button:active {
     box-shadow: 0 0 1px 1px #E3E3E3 inset;
     color: #000000;
 }
-
-.arc path {
-  stroke: #fff;
+#poster-container {
+    text-align: center;
 }
 
-@media (min-width: 981px) { body { padding-top: 60px; } } 
+.navbar-nav > li > a {padding-top:5px !important; padding-bottom:5px !important;}
+.navbar {min-height:32px !important}

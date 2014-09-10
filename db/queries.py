@@ -187,7 +187,12 @@ sql_insert_my_movies = """
 INSERT INTO my_movies (user_email,imdb_id,my_vote)
 VALUES """
 
-
+#input [user_email,imdb_id,imdb_id,user_email]
+sql_insert_my_movies_single = """
+INSERT INTO my_movies (user_email,imdb_id,my_vote)
+SELECT %s,%s,true
+WHERE NOT EXISTS (SELECT id FROM my_movies WHERE imdb_id || user_email = %s||%s )
+"""
 
 sql_rated_stats = """
 WITH mdata AS (
