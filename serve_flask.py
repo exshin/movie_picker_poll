@@ -125,4 +125,4 @@ app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='0.0.0.0',port=80)
+    app.run(host='0.0.0.0')
