@@ -6,16 +6,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Movie Poll!</title>
- <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
-  <link rel="stylesheet" href="./static/style.css"></style>
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
+  <link rel="stylesheet" href="./static/style.css"></style>
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
-<body>
 
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container-fluid" style="width: 70%;">
+    <div class="container-fluid" style="width: 60%;">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -30,15 +30,24 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <div class="navbar-form navbar-left" style="margin: 0px; width: 100%;">
           <ul class="nav navbar-nav" style="margin: 0px; width: 100%;">
-            <li><a href="/movies">Movies</a></li>
-            <li class="active"><a href="/results">Results</a></li>
-            <li><a href="/watched">Watched</a></li>
-            <li><a href="/stats">Stats</a></li>
-            <div class="navbar-form navbar-right">
-              {% if user %}
-                <p style="vertical-align: top">Signed in as {{user}}</p>
-                <!--<p><form action="/clear_sessions"><input type="submit" value="Click to Logout"></p>-->
-              {% endif %}
+            <li ><a href="/movies"><i class="fa fa-film fa-2x"></i><br/>Movies</a></li>
+            <li class="active"><a href="/results"><i class="fa fa-thumbs-up fa-2x"></i><br/>Results</a></li>
+            <li><a href="/watched"><i class="fa fa-flag fa-2x"></i><br/>Watched</a></li>
+            <li><a href="/stats"><i class="fa fa-bar-chart-o fa-2x"></i><br/>Stats</a></li>
+
+            <div class="navbar-form navbar-right" style="margin-top: 0px; margin-bottom: 0px;">
+            {% if user %}
+              <ul class="nav navbar-nav">
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    {{user}}<img class="profilepic" src="{{user_pic}}" border=none width="35" height="35" style="margin-left: 10px; margin-top: 5px;" />
+                    <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="/profile">Profile</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                  </ul>
+            {% endif %}
             </div>
           </ul>
         </div>
@@ -46,9 +55,10 @@
     </div><!-- /.container-fluid -->
   </nav>
 
+<body style="margin-top: 60px;">
 <div class="container" style="width: 65%%">
   {% if results %}
-    <h5 style="font-family:verdana;">Current Top Movie is....  {{results[0][0]}}</h5>
+    <h5 style="font-family:verdana;">Current Top Movie is....  <strong>{{results[0][0]}}</strong></h5>
   {% else %}
     <h4 style="font-family:verdana;">No Results yet... Oh Oh! You should vote!</h4>
   {% endif %}

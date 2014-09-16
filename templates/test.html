@@ -22,7 +22,6 @@
 
   <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
   <link rel="stylesheet" href="./static/style.css"></style>
@@ -33,52 +32,6 @@
   <script type="text/javascript">
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     var my_votes = {{my_votes|tojson|safe}}
-
-    $( document ).ready(function(){
-      $(".container").on('click','.voteBtn',function(e) {
-        var current_vote_imdbID = e.currentTarget.previousElementSibling.attributes.value.value
-        console.log(current_vote_imdbID);
-        var check_array = $.inArray(current_vote_imdbID, my_votes);
-        var vote_logic
-        if(check_array > -1) {
-          // User wants to unvote. Hide Heart.
-          console.log("Unvote")
-          vote_logic = 'unvote'
-          // Remove current_vote_imdbID from my_votes list
-        }
-        else {
-          // User wants to vote. Show Heart.
-          console.log("Vote")
-          vote_logic = 'vote'
-          // Add current_vote_imdbID to my_votes list
-        };
-        $.ajax({
-            type: "GET",
-            url: $SCRIPT_ROOT + "/voteclick/",
-            contentType: "application/json; charset=utf-8",
-            data: { vote_imdbID: $('input[name="vote_imdbID"]').val(),
-                    vote_logic: vote_logic },
-            success: function(data) {
-                $('#testresult').text(data.value);
-            }
-        });
-      });
-    });
-
-    $( document ).ready(function(){
-      $(".container").on('click','.watchedBtn',function(e) {
-        console.log(e.currentTarget.previousElementSibling.attributes.value.value);
-        $.ajax({
-            type: "GET",
-            url: $SCRIPT_ROOT + "/watchedclick/",
-            contentType: "application/json; charset=utf-8",
-            data: { watched_imdbID: $('input[name="watched_imdbID"]').val() },
-            success: function(data) {
-                $('#testresult').text(data.value);
-            }
-        });     
-      });
-    });
 
     $( document ).ready(function() {
     var originalLeave = $.fn.popover.Constructor.prototype.leave;
@@ -103,8 +56,26 @@
       }
     };
 
-    $('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 10, hide: 30}});
+    $('body').popover({ selector: '[data-popover]', trigger: 'hover', placement: 'right', delay: {show: 10, hide: 50}});
     });
+
+    function filter_search(element) {
+      var value = $(element).val().toLowerCase();
+      if (value.length > 0) {
+        $(".movie-container").hide();
+        var m = $(".movie-container");
+        for(var n = 0; n < m.length; n++){
+          title = m[n].getElementsByClassName('wrapper')[0].dataset.title.toLowerCase();
+          if ( title.indexOf(value) != -1 ) {
+            m[n].style.display = "block";
+          };
+        };
+      } 
+      else {
+        $(".movie-container").show();
+      };
+    };
+
 
   </script>
 </head>
@@ -126,7 +97,7 @@
         <div class="navbar-form navbar-left" style="margin: 0px; width: 100%;">
           <ul class="nav navbar-nav" style="margin: 0px; width: 100%;">
             <li class="active"><a href="#"><i class="fa fa-film fa-2x"></i><br/>Movies</a></li>
-            <li><a href="/results"><i class="fa fa-heart fa-2x"></i><br/>Results</a></li>
+            <li><a href="/results"><i class="fa fa-thumbs-up fa-2x"></i><br/>Results</a></li>
             <li><a href="/watched"><i class="fa fa-flag fa-2x"></i><br/>Watched</a></li>
             <li><a href="/stats"><i class="fa fa-bar-chart-o fa-2x"></i><br/>Stats</a></li>
 
@@ -142,7 +113,6 @@
                     <li><a href="/profile">Profile</a></li>
                     <li><a href="/logout">Logout</a></li>
                   </ul>
-                    <!--<p><form action="/clear_sessions"><input type="submit" value="Click to Logout"></p>-->
             {% endif %}
             </div>
 
@@ -160,37 +130,218 @@
   </nav>
 
 <body style="margin-top: 60px;">
-  <div class="container" style="width: 55%;">
     </br>
-    <strong><div id='testresult'></div></strong>
-    {% for row in results %}
-      <div id="movie-container" style="float: left; width: 200px; height: 330px; margin: 0px;">
-        <div id="wrapper" style="float: left; background-color:white">
-          <div id='poster-container' style="-webkit-box-shadow: 3px 3px 3px #7C7C7C; box-shadow: 3px 3px 3px #7C7C7C; width: 180px;">
-            <div style="margin-top: 2px;">
-              <button style="width: 175px; border: none; padding: 0px; background: none; margin-top: 2px;" data-placement="right" data-popover="true" data-html=true data-content="<div style='float: left; width: 200px;'>
-                            <h2 style='margin: 0px;'>{{row[0]}}</h2>
-                            <h4>{{row[7]}}, Rated: {{row[5]}}</h4>
-                            <h7>IMDB Rating: {{row[4]}}</h7>
-                            <br></br>
-                            <h7>Genres: {{row[6]}}</h7>
-                            <br></br>
-                            <h7>{{row[3]}}</h7>
-                            <br></br>
-                            <h7>Cast: {{row[8]}}</h7>
-                            <br></br>
+    <div class="container" style="width: 60%;">
+    <div class="container" style="float: left; width: 10%;">
+      <div class="navbar navbar-default navbar-fixed-side navbar-fixed-side-left" style="float: left; width: 10%;" role="navigation">
+      <div class="container" style="margin-bottom: 5px;margin-top: 0px;margin-right: 5px;margin-left: 5px;">
+          <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+          </div>
+          <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                  <li><a style="color: white; margin-bottom: 5px"><strong>Control Box</strong></a></li>
+                  <li id='search'><input type="text" placeholder="Search" style="margin-bottom: 10px; width: 95%;" onkeyup="filter_search(this)"></input></li>
+                  <li>
+                    <div class="accordion" id="accordion2">
+                      <div class="accordion-group">
+                        <div class="accordion-heading">
+                          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne" style="color: white; margin-bottom: 5px">
+                            Sort
+                          </a>
+                        </div>
+                        <div id="collapseOne" class="accordion-body collapse">
+                          <div class="accordion-inner">
+                            <ul class="sort_ul">
+                              <li class="sort_li">
+                                <a href="#" onclick="return sort('title');" class="sort_movie_title" style="color: white;">Movie Title</a>
+                              </li>
+                              <li class="sort_li">
+                                <a href="#" onclick="return sort('rating');" class="sort_imdb_rating" style="color: white;">IMDB Rating</a>
+                              </li>
+                              <li class="sort_li">
+                                <a href="#" onclick="return sort('year');" class="sort_movie_year" style="color: white;">Movie Year</a>
+                              </li>
+                            </ul>
                           </div>
-              <div style='margin-bottom: 10px;'>
-              <div style='float: left;'>
-              <input type='hidden' name='vote_imdbID' id='vote_imdbID' value='{{row[10]}}'></input>
-              <button type='button' class='btn btn-danger voteBtn' name='voteBtn' id='voteBtn' style='width: 40px;'><i class='fa fa-heart'></i></button></div>
-              <div style='float: left; margin-bottom: 10px'>
-              <input type='hidden' name='watched_imdbID' id='watched_imdbID' value='{{row[10]}}'></input>
-              <button type='button' class='btn btn-primary watchedBtn' style='width: 40px;'><i class='fa fa-flag'></i></button></div>">
-              <img class="posterimg" src="{{row[9]}}" border=none width="175" height="250"></img></button>
-            </div>
+                        </div>
+                      </div>
+                      <div class="accordion-group">
+                        <div class="accordion-heading">
+                          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo" style="color: white; margin-bottom: 5px">
+                            Filter <a href="#" onclick="return filter_all();" style="color: white; margin-left: 20px;" > Reset Filters</a>
+                          </a>
+                        </div>
+                        <div id="collapseTwo" class="accordion-body collapse">
+                          <div class="accordion-inner">
+                            <ul>
+                              <li>
+                                <div class="accordion" id="accordion3">
+                                  <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree" style="color: white; margin-bottom: 5px">
+                                        Votes
+                                      </a>
+                                    </div>
+                                    <div id="collapseThree" class="accordion-body collapse">
+                                      <div class="accordion-inner">
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="vote_True"> Voted
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="vote_None"> Unvoted
+                                        </label><br/>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="accordion" id="accordion4">
+                                  <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#collapseFour" style="color: white; margin-bottom: 5px">
+                                        Movie Rated
+                                      </a>
+                                    </div>
+                                    <div id="collapseFour" class="accordion-body collapse">
+                                      <div class="accordion-inner">
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="rated_G"> G
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();"14');" name="check" id="rated_TV-14"> TV-14
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="rated_PG"> PG
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();"13');" name="check" id="rated_PG-13"> PG-13
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="rated_R"> R
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();"');" name="check" id="rated_Not Rated"> Un-Rated
+                                        </label><br/>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="accordion" id="accordion5">
+                                  <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion5" href="#collapseFive" style="color: white; margin-bottom: 5px">
+                                        Movie Genre
+                                      </a>
+                                    </div>
+                                    <div id="collapseFive" class="accordion-body collapse">
+                                      <div class="accordion-inner">
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Mystery"> Mystery
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Romance"> Romance
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Biography"> Biography
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Family"> Family
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Horror"> Horror
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Crime"> Crime
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Drama"> Drama
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Fantasy"> Fantasy
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Animation"> Animation
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Adventure"> Adventure
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Action"> Action
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Comedy"> Comedy
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_War"> War
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Thriller"> Thriller
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();"name="check" id="genre_Sci-Fi"> Sci-Fi
+                                        </label><br/>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+              </ul>
+          </div>
+          <!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    <div class="container" id="moviecontainer" style="width: 80%; float: right;">
+    {% for row in results %}
+      <div class="movie-container" style="float: left; width: 180px; height: 300px; margin: 0px; display: block;">
+        <div class="wrapper" style="float: left; background-color:white" data-title="{{row[0]}}" data-year="{{row[7]}}" data-rating="{{row[4]}}" data-rated="{{row[5]}}" data-genre="{{row[6]}}" data-vote="{{row[11]}}">
+          <div id='poster-container' style="-webkit-box-shadow: 3px 3px 3px #7C7C7C; box-shadow: 3px 3px 3px #7C7C7C; width: 165px;">
+            <div class="containerdiv" id="containerdiv_{{row[10]}}" style="margin-bottom: 5px;">
+              <button style="width: 165px; border: none; padding: 0px; background: none; margin-top: 2px;margin-left: 0px;margin-right: 0px;" id="popup_button_{{row[10]}}" data-title="{{row[0]}} ({{row[7]}})" data-placement="right" data-popover="true" data-html="true" data-content="
+                {% if row[11] %}
+                <div style='float: left; margin-bottom: 15px; margin-top: 5px' id='buttondiv{{row[10]}}'>
+                <input type='hidden' name='vote_imdbID' id='vote_imdbID' value='{{row[10]}}'></input>
+                <button type='button' class='btn btn-danger btn-xs voteBtn' name='voteBtn' id='voteBtn'><i class='fa fa-thumbs-down' style='margin-right: 3px'></i>Unvote</button></div>
+                {% else %}
+                <div style='float: left; margin-bottom: 15px; margin-top: 5px' id='buttondiv{{row[10]}}'>
+                <input type='hidden' name='vote_imdbID' id='vote_imdbID' value='{{row[10]}}'></input>
+                <button type='button' class='btn btn-primary btn-xs voteBtn' name='voteBtn' id='voteBtn'><i class='fa fa-thumbs-up' style='margin-right: 3px'></i>Vote</button></div>
+                {% endif %}
+                <div style='float: left; width: 180px;'>
+                <h7>Genres: {{row[6]}}</h7>
+                <br></br>
+                <h7>{{row[3]}}</h7>
+                <br></br>
+                <h7>Cast: {{row[8]}}</h7>
+                <br></br>
+                </div>">
+              <img class="posterimg" src="{{row[9]}}" border=none width="165" height="230">
+              </img></button>
+              {% if row[11] %}
+                <div id="checked{{row[10]}}">
+              {% else %}
+                <div id="checked{{row[10]}}" style="display: none;">
+              {% endif %}
+                  <img class="cornerimage" border="0" src="http://www.greenrevolutionems.com/wp-content/uploads/2013/04/check-mark-11-512-300x300.png" alt="" width="75" height="75"/>
+                </div>
+              </div>
             <div>
-              <p style="margin-bottom: 0px; padding-top: 8px"><a href="http://imdb.com/title/{{row[10]}}/" target="blank">{{row[0]}}</a></p> 
+              <p style="margin-bottom: 0px; padding-top: 8px"><a href="http://imdb.com/title/{{row[10]}}/" target="blank" style="padding-left: 5px; padding-right: 5px;">{{row[0]}}</a></p> 
               <h6 style="margin-top: 0px; padding-bottom: 10px">IMDB Rating: {{row[4]}}</h6>
             </div>
           </div>
@@ -198,6 +349,7 @@
       </div>
     {% endfor %}
   </div>
+</div>
 
   <p></br></p>
   <p></br></p>
@@ -205,6 +357,7 @@
 
   <script src="./static/jquery-1.11.1.min.js"></script>
   <script src="./static/bootstrap.min.js"></script>
+  <script src="./static/js/movies.js"></script>
 
 </body>
 </html>

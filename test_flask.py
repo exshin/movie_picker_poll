@@ -17,26 +17,62 @@ from authomatic.providers import oauth2
 CONFIG = {
     'google': {
         'class_': oauth2.Google,
-        'consumer_key': '634213859079-g48uqhs50ljkhjbuknrtobu9u68v6c37.apps.googleusercontent.com',
-        'consumer_secret': 'd7994wiYgkWmY1M23hUU4CHf',
+        'consumer_key': '634213859079-o7rqvrbdjee2l7g1nh78mra0c2ge0avj.apps.googleusercontent.com',
+        'consumer_secret': 'AY28GUQNZ5puGNbAOy3V4Jhf',
         'scope': oauth2.Google.user_info_scope + ['https://www.googleapis.com/auth/userinfo.profile',
                                                 'https://www.googleapis.com/auth/userinfo.email'],
     },
 }
 
 app = Flask(__name__)
+authomatic = Authomatic(CONFIG, 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT')
 
 @app.route('/movies', methods=['GET', 'POST'])
-def login(provider_name='google'):
-    session['user_name'] = 'Eugene Chinveeraphan'
-    session['user_email'] = 'chinveeraphan@gmail.com'
-    session['user'] = session['user_name'].split(' ')[0]
-    my_movie_results = my_movie_votes(session['user_email'])
-    return render_template('movies.html',
+def login_movies(provider_name='google'):
+    response = make_response()
+    if not session.get('user') or not session.get('user_email'):
+        # Authenticate the user
+        result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
+        if result:
+            if result.user:
+                # Get user info
+                result.user.update()
+                # Talk to Google API
+                if result.user.credentials:
+                    response = result.provider.access('https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
+                    if response.status == 200:
+                        print response
+                if result.user.email:
+                    print result.user.data
+                    session['user_name'] = result.user.data.get('displayName')
+                    session['user'] = session['user_name'].split(' ')[0]
+                    session['user_email'] = result.user.email
+                    if result.user.data.get('image'):
+                        session['profile_image_url'] = result.user.data['image'].get('url')
+                    else:
+                        session['profile_image_url'] = "http://www.neurosynaptic.com/wp-content/uploads/2014/05/avatar-blank.jpg"
+            my_movie_results = my_movie_votes(session['user_email'])
+            my_votes = []
+            for row in my_movie_results:
+                if row[11]:
+                    my_votes.append(row[10])
+            return render_template('movies.html',
                 user=session['user'],
-                results=my_movie_results)
-
-
+                user_pic=session['profile_image_url'],
+                results=my_movie_results,
+                my_votes=my_votes)
+    else:
+        my_movie_results = my_movie_votes(session['user_email'])
+        my_votes = []
+        for row in my_movie_results:
+            if row[11]:
+                my_votes.append(row[10])
+        return render_template('movies.html',
+                user=session['user'],
+                user_pic=session['profile_image_url'],
+                results=my_movie_results,
+                my_votes=my_votes)
+    return response
 
 @app.route('/test', methods=['GET'])
 def test_html():
@@ -63,22 +99,25 @@ def voteclick():
     imdbID = str(request.args.get('vote_imdbID'))
     logic = str(request.args.get('vote_logic'))
     print session['user_email'], logic.title(), imdbID
-    if logic == 'vote':
-        # query insert
-        print 'insert'
-    else:
-        # query remove
-        print 'remove'
+    # insert or remove depending on logic
+    vote_single(imdbID, session['user_email'], logic)
     # query new my_votes
-    return jsonify(ret_data)
+    my_movie_results = my_movie_votes(session['user_email'])
+    my_votes = []
+    for row in my_movie_results:
+        if row[11]:
+            my_votes.append(row[10])
+    print my_votes
+    return jsonify({'votes': my_votes})
 
-@app.route('/watchedclick/', methods=['GET'])
-def watchedclick():
-    # TESTING new features/ UI
-    ret_data = {"value": request.args.get('watched_imdbID')}
-    imdbID = str(request.args.get('watched_imdbID'))
-    print session['user_email'], 'Watched', imdbID
-    return jsonify(ret_data)
+
+@app.route('/profile')
+def profilepage():
+    # Display profile page
+    return """
+        <p>Profile Page (Work in Progress) </p>
+        <p><a href="/movies">Return to Home</a></p>
+        """ 
 
 @app.route('/')
 def index():
@@ -102,7 +141,10 @@ def show_results():
             print vote_list, len(vote_list)
             vote_list_update(vote_list,session.get('user_email'))
     results = get_movie_votes()
-    return render_template('results.html',results=results,user=session['user'])
+    return render_template('results.html',
+                        results=results,
+                        user=session['user'],
+                        user_pic=session['profile_image_url'])
 
 @app.route('/addnew', methods=['GET','POST'])
 def add_new_movie():
@@ -116,7 +158,10 @@ def add_new_movie():
 def show_watched():
     # Get watched movies list
     watched_results = get_watched()
-    return render_template('watched.html',results=watched_results,user=session['user'])
+    return render_template('watched.html',
+                        results=watched_results,
+                        user=session['user'],
+                        user_pic=session['profile_image_url'])
 
 @app.route('/stats', methods=['GET','POST'])
 def show_results_stats():
@@ -126,7 +171,9 @@ def show_results_stats():
     bar_data, pie_data = get_results_stats(session['user_email'])
     save_bar_results_to_csv(bar_data)
     save_pie_results_to_csv(pie_data)
-    return render_template('results_stats.html', user=session['user'])
+    return render_template('results_stats.html',
+                                user=session['user'],
+                                user_pic=session['profile_image_url'])
 
 @app.route('/favicon.ico')
 def favicon():
@@ -146,7 +193,7 @@ def logout():
     session.clear()
     return """
         <p>Logged out</p>
-        <p><a href="/test">Return to Home</a></p>
+        <p><a href="/movies">Return to Home</a></p>
         """ 
  
 app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'

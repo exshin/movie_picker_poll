@@ -149,4 +149,21 @@ def vote_list_update(vote_list, user_email):
 		print error, ':: Vote List Update Unsuccessful'
 
 
+def vote_single(imdb_id, user_email, vote_logic):
+	# Update my_movies with single vote or unvote
+	if imdb_id and user_email and vote_logic:
+		conn, dbCursor = connect_db()
+		try:
+			if vote_logic == 'vote':
+				print 'VOTE'
+				dbCursor.execute(sql_insert_my_movies_single,[user_email,imdb_id,imdb_id,user_email])
+			else:
+				print 'REMOVE'
+				dbCursor.execute(sql_delete_my_movies_single,[user_email,imdb_id])
+			conn.commit()
+			conn.close()
+		except Exception as error:
+			print error, "in vote_single, movie_picker.py", imdb_id, user_email, vote_logic
+			conn.rollback()
+
 

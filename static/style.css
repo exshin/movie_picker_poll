@@ -96,4 +96,93 @@ button:active {
     text-align: center;
 }
 
-@media (min-width: 981px) { body { padding-top: 60px; } } 
+
+.navbar-nav > li > a {padding-top:5px !important; padding-bottom:5px !important;}
+.navbar {min-height:32px !important}
+.navbar {background: steelblue;}
+.navbar-default .navbar-nav>li>a {color: white;}
+
+.popover.right {
+	margin-left: 5px;
+	margin-top: 75px;
+}
+
+.navbar-fixed-side-left {
+  
+}
+.navbar-fixed-side {
+  position: fixed;
+  border-width: 0;
+  z-index: 1030;
+  min-height: 5px;
+  min-width: 5px;
+  max-width: 200px;
+  margin-bottom: 0;
+  border: 0px solid transparent;
+}
+.navbar-fixed-side .navbar-toggle {
+  float: none;
+  margin: 0;
+}
+.navbar-fixed-side .nav > li > a {
+  width: 100%;
+  padding: 5px;
+  color: white;
+}
+.navbar-fixed-side .dropdown-menu > li > a {
+  padding: 5px;
+  color: white;
+  float: left;
+}
+.navbar-fixed-side .dropdown-header {
+  padding: 5px;
+}
+.navbar-fixed-side .navbar-nav {
+  margin: 0;
+}
+.navbar-fixed-side .navbar-nav > li {
+  float: none;
+}
+.navbar-fixed-side .navbar-nav > li > a {
+  padding: 5px;
+  line-height: 20px;
+  color: white;
+}
+.navbar-fixed-side .navbar-nav .open .dropdown-menu > li > a,
+.navbar-fixed-side .navbar-nav .open .dropdown-menu .dropdown-header {
+  padding: 3px 5px 3px 15px;
+}
+.navbar-fixed-side .container {
+  width: 100%;
+  padding: 0;
+}
+.navbar-fixed-side .navbar-header {
+  float: none;
+  margin: 0;
+}
+.navbar-fixed-side .navbar-collapse {
+  padding: 0 2px;
+}
+.navbar-fixed-side .container .navbar-collapse {
+  margin: 0;
+}
+.navbar-fixed-side .container .navbar-brand {
+  margin: 0;
+}
+.navbar-fixed-side .navbar-brand {
+  float: none;
+  height: 100%;
+  padding: 5px 3px;
+  font-size: 18px;
+  line-height: 20px;
+}
+
+.accordion-group {
+	margin-top: 5px;
+	margin-bottom: 5px;
+	color: white;
+}
+.accordion-inner {
+	margin-bottom: 3px;
+	margin-top: 3px;
+}

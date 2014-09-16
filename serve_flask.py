@@ -3,7 +3,7 @@
 
 import os
 import requests
-from flask import Flask, make_response, render_template, request
+from flask import Flask, make_response, render_template, request, jsonify
 from flask import send_from_directory, session, url_for, redirect
 from datetime import datetime
 from datetime import timedelta
@@ -17,8 +17,8 @@ from authomatic.providers import oauth2
 
 CONFIG = { 'google': {
         'class_': oauth2.Google,
-        'consumer_key': '634213859079-hv40hf2rh5ki00mhfa8tmejepon8g2h7.apps.googleusercontent.com',
-        'consumer_secret': '5DpbsTa8CTpSbC4cen6u_7h5',
+        'consumer_key': '634213859079-mgc49r52otjltocu8hflks93tagflis0.apps.googleusercontent.com',
+        'consumer_secret': 'xnGxvrPy0DUdsoF-z9KTi_ur',
         'scope': oauth2.Google.user_info_scope + ['https://www.googleapis.com/auth/userinfo.profile',
                                                 'https://www.googleapis.com/auth/userinfo.email'],
         },
@@ -33,7 +33,6 @@ def index():
 
 @app.route('/movies', methods=['GET', 'POST'])
 def login_movies(provider_name='google'):
-
     response = make_response()
     if not session.get('user') or not session.get('user_email'):
         # Authenticate the user
@@ -52,15 +51,31 @@ def login_movies(provider_name='google'):
                     session['user_name'] = result.user.data.get('displayName')
                     session['user'] = session['user_name'].split(' ')[0]
                     session['user_email'] = result.user.email
+                    if result.user.data.get('image'):
+                        session['profile_image_url'] = result.user.data['image'].get('url')
+                    else:
+                        session['profile_image_url'] = "http://www.neurosynaptic.com/wp-content/uploads/2014/05/avatar-blank.jpg"
             my_movie_results = my_movie_votes(session['user_email'])
+            my_votes = []
+            for row in my_movie_results:
+                if row[11]:
+                    my_votes.append(row[10])
             return render_template('movies.html',
-                                user=session['user'],
-                                results=my_movie_results)
+                user=session['user'],
+                user_pic=session['profile_image_url'],
+                results=my_movie_results,
+                my_votes=my_votes)
     else:
         my_movie_results = my_movie_votes(session['user_email'])
+        my_votes = []
+        for row in my_movie_results:
+            if row[11]:
+                my_votes.append(row[10])
         return render_template('movies.html',
-                                user=session['user'],
-                                results=my_movie_results)
+                user=session['user'],
+                user_pic=session['profile_image_url'],
+                results=my_movie_results,
+                my_votes=my_votes)
     return response
 
 @app.route('/results', methods=['GET','POST'])
@@ -81,7 +96,10 @@ def show_results():
             print vote_list, len(vote_list)
             vote_list_update(vote_list,session.get('user_email'))
     results = get_movie_votes()
-    return render_template('results.html',results=results,user=session['user'])
+    return render_template('results.html',
+                            results=results,
+                            user=session['user'],
+                            user_pic=session['profile_image_url'])
 
 @app.route('/addnew', methods=['GET','POST'])
 def add_new_movie():
@@ -92,11 +110,17 @@ def add_new_movie():
     return render_template('addnew.html',title_list=title_list)
 
 
-@app.route('/watched', methods=['GET','POST'])
+@app.route('/watched')
 def show_watched():
     # Get watched movies list
-    watched_results = get_watched()
-    return render_template('watched.html',results=watched_results,user=session['user'])
+    if session.get('user') and session.get('user_email'):
+        watched_results = get_watched()
+        return render_template('watched.html',
+                            results=watched_results,
+                            user=session['user'],
+                            user_pic=session['profile_image_url'])
+    else:
+        return redirect("/movies", code=302)
 
 @app.route('/stats', methods=['GET','POST'])
 def show_results_stats():
@@ -104,9 +128,39 @@ def show_results_stats():
         bar_data, pie_data = get_results_stats(session['user_email'])
         save_bar_results_to_csv(bar_data)
         #save_pie_results_to_csv(pie_data) //not ready yet
-        return render_template('results_stats.html', user=session['user'])
+        return render_template('results_stats.html',
+                                user=session['user'],
+                                user_pic=session['profile_image_url'])
     else:
         return redirect("/movies", code=302)
+
+@app.route('/voteclick/', methods=['GET'])
+def voteclick():
+    # TESTING new features/ UI
+    ret_data = {"value": request.args.get('vote_imdbID')}
+    imdbID = str(request.args.get('vote_imdbID'))
+    logic = str(request.args.get('vote_logic'))
+    print session['user_email'], logic.title(), imdbID
+    # insert or remove depending on logic
+    vote_single(imdbID, session['user_email'], logic)
+    # query new my_votes
+    my_movie_results = my_movie_votes(session['user_email'])
+    my_votes = []
+    for row in my_movie_results:
+        if row[11]:
+            my_votes.append(row[10])
+    print my_votes
+    return jsonify({'votes': my_votes})
+
+
+@app.route('/profile')
+def profilepage():
+    # Display profile page
+    return """
+        <p>Profile Page (Work in Progress) </p>
+        <p><a href="/movies">Return to Home</a></p>
+        """ 
+
 
 @app.route('/favicon.ico')
 def favicon():
@@ -119,6 +173,14 @@ def clear_sessions():
     return """
         <p>Logged out</p>
         <p><a href="/movie_poll">Return to Movie Poll</a></p>
+        """ 
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return """
+        <p>Logged out</p>
+        <p><a href="/movies">Return to Home</a></p>
         """ 
 
 app.secret_key = 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT'

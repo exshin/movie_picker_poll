@@ -194,6 +194,12 @@ SELECT %s,%s,true
 WHERE NOT EXISTS (SELECT id FROM my_movies WHERE imdb_id || user_email = %s||%s )
 """
 
+#input [user_email,imdb_id]
+sql_delete_my_movies_single = """
+DELETE FROM my_movies WHERE user_email = %s AND imdb_id = %s;
+"""
+
+
 sql_rated_stats = """
 WITH mdata AS (
 SELECT DISTINCT m.user_email, d.imdbid, d.movie, d.rated, d.genre, d.movie_year
