@@ -54,5 +54,4 @@ def get_poster(imdb_id):
 		return poster_urls[0]
 
 	except Exception as error:
-		print error, ":: in get_poster"
-		return ''
+		return 'http://media.gadgetsin.com/2014/04/the_superhero_minimalist_poster_collection_2.jpg'
