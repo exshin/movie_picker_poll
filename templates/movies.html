@@ -22,7 +22,6 @@
 
   <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
   <link rel="stylesheet" href="./static/style.css"></style>
@@ -59,6 +58,24 @@
 
     $('body').popover({ selector: '[data-popover]', trigger: 'hover', placement: 'right', delay: {show: 10, hide: 50}});
     });
+
+    function filter_search(element) {
+      var value = $(element).val().toLowerCase();
+      if (value.length > 0) {
+        $(".movie-container").hide();
+        var m = $(".movie-container");
+        for(var n = 0; n < m.length; n++){
+          title = m[n].getElementsByClassName('wrapper')[0].dataset.title.toLowerCase();
+          if ( title.indexOf(value) != -1 ) {
+            m[n].style.display = "block";
+          };
+        };
+      } 
+      else {
+        $(".movie-container").show();
+      };
+    };
+
 
   </script>
 </head>
@@ -129,7 +146,7 @@
           <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
                   <li><a style="color: white; margin-bottom: 5px"><strong>Control Box</strong></a></li>
-                  <li><input type="text" placeholder="Search" style="margin-bottom: 10px; width: 95%;"></input></li>
+                  <li id='search'><input type="text" placeholder="Search" style="margin-bottom: 10px; width: 95%;" onkeyup="filter_search(this)"></input></li>
                   <li>
                     <div class="accordion" id="accordion2">
                       <div class="accordion-group">
@@ -157,7 +174,7 @@
                       <div class="accordion-group">
                         <div class="accordion-heading">
                           <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo" style="color: white; margin-bottom: 5px">
-                            Filter <a href="#" onclick="return filter_all();" style="color: white; margin-left: 20px" > Reset Filters</a>
+                            Filter <a href="#" onclick="return filter_all();" style="color: white; margin-left: 20px;" > Reset Filters</a>
                           </a>
                         </div>
                         <div id="collapseTwo" class="accordion-body collapse">
@@ -270,7 +287,7 @@
                                           <input type="checkbox" onchange="return filter();" name="check" id="genre_Thriller"> Thriller
                                         </label><br/>
                                         <label>
-                                          <input type="checkbox" onchange="return filter();" name="check" id="genre_Sci-Fi"> Sci-Fi
+                                          <input type="checkbox" onchange="return filter();"name="check" id="genre_Sci-Fi"> Sci-Fi
                                         </label><br/>
                                       </div>
                                     </div>
