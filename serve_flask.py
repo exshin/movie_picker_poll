@@ -51,10 +51,12 @@ def login_movies(provider_name='google'):
                     session['user_name'] = result.user.data.get('displayName')
                     session['user'] = session['user_name'].split(' ')[0]
                     session['user_email'] = result.user.email
+                    session['user_data'] = result.user.data
                     if result.user.data.get('image'):
                         session['profile_image_url'] = result.user.data['image'].get('url')
                     else:
                         session['profile_image_url'] = "http://www.neurosynaptic.com/wp-content/uploads/2014/05/avatar-blank.jpg"
+                    insert_users(session['user_name'],session['user_email'],session['profile_image_url'],json.dumps(session['user_data']),session['user_data'].get('id'))
             my_movie_results = my_movie_votes(session['user_email'])
             my_votes = []
             for row in my_movie_results:
@@ -68,6 +70,7 @@ def login_movies(provider_name='google'):
     else:
         my_movie_results = my_movie_votes(session['user_email'])
         my_votes = []
+        insert_users(session['user_name'],session['user_email'],session['profile_image_url'],json.dumps(session['user_data']),session['user_data'].get('id'))
         for row in my_movie_results:
             if row[11]:
                 my_votes.append(row[10])

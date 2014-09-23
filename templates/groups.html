@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+               "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Movie Poll!</title>
+  <style type="text/css">
+      .box{
+          padding: 20px;
+          display: none;
+          margin-top: 20px;
+          border: 1px solid #000;
+      }
+      .containerdiv { float: left; position: relative; } 
+      .cornerimage { position: absolute; top: 0; left: 0; } 
+
+  </style>
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="./static/bootstrap.min.css"></style>
+  <link rel="stylesheet" href="./static/style.css"></style>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script type=text/javascript src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+  <script type="text/javascript">
+
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    var groups_id_list = {{groups_id_list|tojson|safe}};
+
+    function filter_search(element) {
+      var value = $(element).val().toLowerCase();
+      if (value.length > 0) {
+        $(".group-container").hide();
+        var m = $(".group-container");
+        for(var n = 0; n < m.length; n++){
+          groupname = m[n].getElementsByClassName('wrapper')[0].dataset.groupname.toLowerCase();
+          if ( groupname.indexOf(value) != -1 ) {
+            m[n].style.display = "block";
+          };
+        };
+      } 
+      else {
+        $(".group-container").show();
+      };
+    };
+
+    function submit_create_group_form() {
+      document.getElementById("create_group_form").submit();
+    };
+
+
+  </script>
+</head>
+
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid" style="width: 60%;">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div><!-- /navbar-header -->
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <div class="navbar-form navbar-left" style="margin: 0px; width: 100%;">
+          <ul class="nav navbar-nav" style="margin: 0px; width: 100%;">
+            <li ><a href="/movies"><i class="fa fa-film fa-2x"></i><br/>Movies</a></li>
+            <li><a href="/results"><i class="fa fa-thumbs-up fa-2x"></i><br/>Results</a></li>
+            <li><a href="/watched"><i class="fa fa-flag fa-2x"></i><br/>Watched</a></li>
+            <li><a href="/stats"><i class="fa fa-bar-chart-o fa-2x"></i><br/>Stats</a></li>
+            <li class="active"><a href="/groups"><i class="fa fa-group fa-2x"></i><br/>Groups</a></li>
+
+            <div class="navbar-form navbar-right" style="margin-top: 0px; margin-bottom: 0px;">
+            {% if user %}
+              <ul class="nav navbar-nav">
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    {{user}}<img class="profilepic" src="{{user_pic}}" border=none width="35" height="35" style="margin-left: 10px; margin-top: 5px;" />
+                    <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="/profile">Profile</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                  </ul>
+            {% endif %}
+            </div>
+          </ul>
+        </div>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+<body style="margin-top: 60px;">
+    </br>
+    <div class="container" style="width: 60%;">
+    <div class="container" style="float: left; width: 10%;">
+      <div class="navbar navbar-default navbar-fixed-side navbar-fixed-side-left" style="float: left; width: 10%;" role="navigation">
+      <div class="container" style="margin-bottom: 5px;margin-top: 0px;margin-right: 5px;margin-left: 5px;">
+          <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+          </div>
+          <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                  <li><a style="color: white; margin-bottom: 5px"><strong>Control Box</strong></a></li>
+                  <li id='search'><input type="text" placeholder="Search" style="margin-bottom: 10px; width: 95%;" onkeyup="filter_search(this)"></input></li>
+                  <li>
+                    <div>
+                      <button class="btn btn-info btn-xs" data-toggle="modal" data-target="#addGroup" style="margin-left: 0px;margin-right: 0px; width:80%;margin-top: 5px;margin-bottom: 5px;">Start a Group!</button>
+                    </div>
+                    <div class="accordion" id="accordion2">
+                      <div class="accordion-group">
+                        <div class="accordion-heading">
+                          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne" style="color: white; margin-bottom: 5px">
+                            Sort <i class="fa fa-sort-down"></i> 
+                          </a>
+                        </div>
+                        <div id="collapseOne" class="accordion-body collapse">
+                          <div class="accordion-inner">
+                            <ul class="sort_ul">
+                              <li class="sort_li">
+                                <a href="#" onclick="return sort('name');" class="sort_name" style="color: white;">Group Name</a>
+                              </li>
+                              <li class="sort_li">
+                                <a href="#" onclick="return sort('location');" class="sort_location" style="color: white;">Group Location</a>
+                              </li>
+                              <li class="sort_li">
+                                <a href="#" onclick="return sort('members');" class="sort_members" style="color: white;">Number of Members</a>
+                              </li>
+                              <li class="sort_li">
+                                <a href="#" onclick="return sort('lastevent');" class="sort_lastevent" style="color: white;">Last Event Date</a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="accordion-group">
+                        <div class="accordion-heading">
+                          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo" style="color: white; margin-bottom: 5px">
+                            Filter <i class="fa fa-sort-down"></i>  <a href="#" onclick="return filter_all();" style="color: white; margin-left: 20px;" > Reset Filters</a>
+                          </a>
+                        </div>
+                        <div id="collapseTwo" class="accordion-body collapse">
+                          <div class="accordion-inner">
+                            <ul>
+                              <li>
+                                <div class="accordion" id="accordion3">
+                                  <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree" style="color: white; margin-bottom: 5px">
+                                        Membership <i class="fa fa-sort-down"></i> 
+                                      </a>
+                                    </div>
+                                    <div id="collapseThree" class="accordion-body collapse">
+                                      <div class="accordion-inner">
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="vote_True"> Member
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="vote_None"> Not a Member
+                                        </label><br/>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="accordion" id="accordion4">
+                                  <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#collapseFour" style="color: white; margin-bottom: 5px">
+                                        Movie Rated <i class="fa fa-sort-down"></i> 
+                                      </a>
+                                    </div>
+                                    <div id="collapseFour" class="accordion-body collapse">
+                                      <div class="accordion-inner">
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="rated_G"> G
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();"14');" name="check" id="rated_TV-14"> TV-14
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="rated_PG"> PG
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();"13');" name="check" id="rated_PG-13"> PG-13
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();" name="check" id="rated_R"> R
+                                        </label><br/>
+                                        <label>
+                                          <input type="checkbox" onchange="return filter();"');" name="check" id="rated_Not Rated"> Un-Rated
+                                        </label><br/>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+              </ul>
+          </div>
+          <!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    <!-- Modal Start New Group -->
+    <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog" style="width:300px">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" style="width:10%" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="myModalLabel">Start a New Group</h4>
+          </div>
+          <div class="modal-body">
+            <form id="create_group_form" action="" method="POST">
+              <p>Group Name <input type="text" style="float:right;" name="group_name" id="group_name"/></p>
+              <p>Location <input type="text" style="float:right;" name="group_location" id="group_location"/></p>
+              <p>Image URL <input type="text" style="float:right;" name="group_image" id="group_image"/></p>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" style="float:left;width:35%" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" style="float:right;width:35%" class="btn btn-primary" onclick="submit_create_group_form()" data-dismiss"modal">Create!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal End -->
+    <!-- Modal See Events-->
+    <div class="modal fade" id="seeEvents" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="myModalLabel">Events</h4>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal End -->
+    <div class="container" id="groupcontainer" style="width: 80%; float: right;">
+    {% for row in groups_list %}
+      <div class="group-container" style="float: left; width: 280px; height: 360px; margin: 5px; display: block;">
+        <div class="wrapper" style="float: left; background-color:whitesmoke" data-groupname="{{row[1]}}" data-groupimage="{{row[2]}}" data-location="{{row[3]}}" data-previousmovie="{{row[4]}}" data-lastevent="{{row[5]}}" data-nextevent="{{row[6]}}" data-membercount="{{row[7]}}" data-ismember="{{row[8]}}">
+          <div id='group-indiv-container' style="-webkit-box-shadow: 3px 3px 3px #7C7C7C; box-shadow: 3px 3px 3px #7C7C7C; width: 280px; height: 360px;">
+            <div class="containerdiv" id="containerdiv_{{row[0]}}" style="margin-bottom: 12px;">
+              <img class="posterimg" src="{{row[2]}}" border=none width="280" height="200"></img>
+            </div>
+            <div>
+              <div>
+                <div>
+                  <h3 style="margin-top: 0px; margin-bottom: 0px; text-align: center;"> {{row[1]}} </h3>
+                  <p style="margin-top: 0px; text-align: center;">{{row[3]}}</p>
+                </div>
+                <div class="container" style="width: 100%">
+                  <div style="float: left">
+                    <p> Next Event: {{row[6]}} </p>
+                    <p> Members: {{row[7]}} </p>
+                  </div>
+                  {% if row[8] %}
+                  <div id="checked{{row[0]}}"  style="float: right; width: 40px;">
+                  {% else %}
+                  <div id="checked{{row[0]}}" style="display: none; float: right; width: 40px;">
+                  {% endif %}
+                    <img border="0" src="./static/images/star.png" alt="" width="25" height="25"/>
+                    <p class="label label-default"> Member </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="joinleavebutton{{row[0]}}">
+            {% if row[8] == 1 %}
+              <div style='float: left; margin-bottom: 15px; margin-top: 5px; margin-right: 10px; margin-left: 10px; width: 40%' id='buttondiv{{row[0]}}'>
+                <input type='hidden' name='group_id' id='group_id' value='{{row[0]}}'></input>
+                <button type='button' class='btn btn-danger btn-xs groupsBtn' name='groupsBtn' id='groupsBtn' value="{{row[0]}}" style='width:100%;'>Leave</button>
+              </div>
+            {% else %}
+              <div style='float: left; margin-bottom: 15px; margin-top: 5px; margin-right: 10px; margin-left: 10px; width: 40%' id='buttondiv{{row[0]}}'>
+                <input type='hidden' name='group_id' id='group_id' value='{{row[0]}}'></input>
+                <button type='button' class='btn btn-primary btn-xs groupsBtn' name='groupsBtn' id='groupsBtn' value="{{row[0]}}" style='width:100%;'>Join</button>
+              </div>
+            {% endif %}
+              <div style='float: left; margin-bottom: 15px; margin-top: 5px; margin-right: 10px; margin-left: 10px; width: 40%' id='eventsdiv{{row[0]}}'>
+                <button type='button' class='btn btn-info btn-xs groupeventsBtn' name='groupeventsBtn' id='groupeventsBtn' data-toggle="modal" data-target="#seeEvents" style='width:100%;'>See Events <i class='fa fa-calendar' style='margin-right: 3px'></i></button>
+              </div>
+            </div>
+          </div> <!-- poster-container -->
+        </div> <!-- wrapper -->
+      </div> <!-- group-container -->
+    {% endfor %}
+    </div> <!-- container -->
+
+    <p></br></p>
+    <p></br></p>
+    <p></br></p>
+
+    <script src="./static/jquery-1.11.1.min.js"></script>
+    <script src="./static/bootstrap.min.js"></script>
+    <script src="./static/js/groups.1.02.js"></script>
+
+  </body>
+</html>

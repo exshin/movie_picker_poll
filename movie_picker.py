@@ -167,3 +167,91 @@ def vote_single(imdb_id, user_email, vote_logic):
 			conn.rollback()
 
 
+def get_groups(user_email):
+	# get list of groups
+	conn, dbCursor = connect_db()
+	dbCursor.execute(sql_get_groups,[user_email])
+	group_list = dbCursor.fetchall()
+	#group_list = [group_id,group_name,group_image,group_location,preview_movie,next_movie,member_count,is_user_a_member?]
+	conn.close()
+	return group_list
+
+def insert_users(user_name,user_email,user_avatar,user_data,google_auth_id,admin_status='false'):
+	# inserts users if they don't exist
+	conn, dbCursor = connect_db()
+	try:
+		dbCursor.execute(sql_insert_new_users,
+			[user_name,user_email,user_avatar,user_data,google_auth_id,admin_status,user_email])
+		conn.commit()
+		new_user_id = dbCursor.fetchall()
+		conn.close()
+	except Exception as error:
+		print error, "--Error commiting new users"
+		conn.rollback()
+		new_user_id = None
+	return new_user_id
+
+def insert_groups(group_name,group_location,group_image,group_creator_id):
+	# inserts new groups if the group name doesn't exist
+	conn, dbCursor = connect_db()
+	try:
+		dbCursor.execute(sql_insert_new_groups,
+			[group_name,group_location,group_image,group_creator_id,group_name])
+		new_group_id = dbCursor.fetchall()
+		if new_group_id:
+			group_id = new_group_id[0]
+			dbCursor.execute(sql_insert_new_group_members,
+				[group_id,group_creator_id,'true',group_id,group_creator_id])
+			first_group_member_id = dbCursor.fetchall()
+			if first_group_member_id:
+				print "Success! New group created: ",group_name
+				conn.commit()
+		else:
+			group_id = None
+		conn.close()
+		return group_id
+		
+	except Exception as error:
+		print error, "--Error commiting new group"
+		conn.rollback()
+		return None
+
+def get_user_id(user_email):
+	# get user_id
+	conn, dbCursor = connect_db()
+	try:
+		dbCursor.execute(sql_get_user_id,[user_email])
+		results = dbCursor.fetchall()
+		if results:
+			user_id = results[0]
+		conn.close()
+		return user_id
+	except Exception as error:
+		print error
+		user_id = None
+	return user_id
+
+
+def join_leave_group(user_id,group_id,logic):
+	# join or leave group
+	conn, dbCursor = connect_db()
+	if logic == 'join':
+		try:
+			dbCursor.execute(sql_insert_new_group_members,
+					[group_id,user_id,'false',group_id,user_id])
+			results = dbCursor.fetchall()
+			if results:
+				conn.commit()
+				print 'User successfully joined - ', group_id
+			conn.close()
+		except Exception as error:
+			print error, 'join logic error'
+	else:
+		try:
+			dbCursor.execute(sql_delete_group_members,
+					[user_id,group_id])
+			conn.commit()
+			print 'User successfully left - ', group_id
+			conn.close()
+		except Exception as error:
+			print error, 'leave logic error'

@@ -3,6 +3,7 @@
 
 import os
 import requests
+import json
 from flask import Flask, make_response, render_template, request, jsonify
 from flask import send_from_directory, session, url_for, redirect
 from datetime import datetime
@@ -30,7 +31,7 @@ authomatic = Authomatic(CONFIG, 'A0Zr80j/3yX r~XHH!jmN]L^X/,?RT')
 @app.route('/movies', methods=['GET', 'POST'])
 def login_movies(provider_name='google'):
     response = make_response()
-    if not session.get('user') or not session.get('user_email'):
+    if not session.get('user') or not session.get('user_email') or not session.get('user_data'):
         # Authenticate the user
         result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
         if result:
@@ -47,10 +48,12 @@ def login_movies(provider_name='google'):
                     session['user_name'] = result.user.data.get('displayName')
                     session['user'] = session['user_name'].split(' ')[0]
                     session['user_email'] = result.user.email
+                    session['user_data'] = result.user.data
                     if result.user.data.get('image'):
                         session['profile_image_url'] = result.user.data['image'].get('url')
                     else:
                         session['profile_image_url'] = "http://www.neurosynaptic.com/wp-content/uploads/2014/05/avatar-blank.jpg"
+                    new_user_id = insert_users(session['user_name'],session['user_email'],session['profile_image_url'],json.dumps(session['user_data']),session['user_data'].get('id'))
             my_movie_results = my_movie_votes(session['user_email'])
             my_votes = []
             for row in my_movie_results:
@@ -64,6 +67,7 @@ def login_movies(provider_name='google'):
     else:
         my_movie_results = my_movie_votes(session['user_email'])
         my_votes = []
+        insert_users(session['user_name'],session['user_email'],session['profile_image_url'],json.dumps(session['user_data']),session['user_data'].get('id'))
         for row in my_movie_results:
             if row[11]:
                 my_votes.append(row[10])
@@ -109,6 +113,25 @@ def voteclick():
             my_votes.append(row[10])
     print my_votes
     return jsonify({'votes': my_votes})
+
+@app.route('/groupjoinleave/',methods=['GET'])
+def groupjoinleave():
+    return_data = {"value": request.args.get('group_id')}
+    group_id = str(request.args.get('group_id'))
+    logic = str(request.args.get('group_join_or_leave'))
+    print session['user_email'], logic.title(), group_id
+    # insert or remove from user_groups list
+    user_id = get_user_id(session.get('user_email'))
+    if user_id:
+        join_leave_group(user_id,group_id,logic)
+    # query new groups list
+    # create ID list
+    groups_list = get_groups(session.get('user_email'))
+    groups_id_list = []
+    for row in groups_list:
+        if row[0] and row[8] == 1:
+            groups_id_list.append(row[0])
+    return jsonify({'groups_id': groups_id_list})
 
 
 @app.route('/profile')
@@ -163,6 +186,30 @@ def show_watched():
                         user=session['user'],
                         user_pic=session['profile_image_url'])
 
+@app.route('/groups',methods=['GET','POST'])
+def show_groups():
+    # Get groups list
+    if session.get('user_email'):
+        if request.method == 'POST':
+            group_name = request.form.get('group_name')
+            group_location = request.form.get('group_location')
+            group_image = request.form.get('group_image')
+            if group_name and group_location and group_image:
+                user_id = get_user_id(session.get('user_email'))
+                new_group_id = insert_groups(group_name,group_location,group_image,user_id)
+        groups_list = get_groups(session.get('user_email'))
+        groups_id_list = []
+        for row in groups_list:
+            if row[0] and row[8] == 1:
+                groups_id_list.append(row[0])
+        return render_template('groups.html',
+                            groups_list=groups_list,
+                            groups_id_list=groups_id_list,
+                            user=session['user'],
+                            user_pic=session['profile_image_url'])
+    else:
+        return redirect("/movies", code=302)
+
 @app.route('/stats', methods=['GET','POST'])
 def show_results_stats():
     session['user_email'] = 'chinveeraphan@gmail.com'
@@ -170,7 +217,7 @@ def show_results_stats():
     session['user'] = session['user_name'].split(' ')[0]
     bar_data, pie_data = get_results_stats(session['user_email'])
     save_bar_results_to_csv(bar_data)
-    save_pie_results_to_csv(pie_data)
+    #save_pie_results_to_csv(pie_data)
     return render_template('results_stats.html',
                                 user=session['user'],
                                 user_pic=session['profile_image_url'])
