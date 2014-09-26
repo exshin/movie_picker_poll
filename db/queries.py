@@ -278,3 +278,103 @@ SELECT DISTINCT m.user_email, d.imdbid, d.movie, d.rated, d.genre, d.movie_year
 FROM my_movies m LEFT JOIN movie_data d ON m.imdb_id = d.imdbid
 ORDER BY m.user_email
 """
+
+
+sql_get_groups = """
+SELECT DISTINCT
+	g.id
+	,g.group_name
+	,g.group_image
+	,g.group_location
+	,COALESCE(e1.movie_name,'None') previous_movie 
+	,COALESCE(previous_events.max_event_date::date::text,'None') last_event_date
+	,COALESCE(next_events.min_event_date::date::text,'None') next_event_date
+	,COUNT(DISTINCT gm.member_id) member_count
+	,CASE WHEN %s = u.user_email THEN 1 ELSE 0 END user_member_check
+FROM 
+	groups g 
+	LEFT JOIN
+	events e1
+	ON g.id = e1.group_id
+	LEFT JOIN
+	(
+	SELECT DISTINCT
+		e.group_id
+		,MAX(e.event_date) max_event_date
+	FROM
+		events e
+		LEFT JOIN
+		groups g
+		ON e.group_id = g.id
+	WHERE
+		e.event_date < current_date
+	GROUP BY
+		e.group_id
+	) AS previous_events
+	ON g.id = previous_events.group_id AND previous_events.max_event_date = e1.event_date
+	LEFT JOIN
+	(
+	SELECT DISTINCT
+		e.group_id
+		,MIN(e.event_date) min_event_date
+	FROM
+		events e
+		LEFT JOIN
+		groups g
+		ON e.group_id = g.id
+	WHERE
+		e.event_date > current_date
+	GROUP BY
+		e.group_id
+	) AS next_events
+	ON g.id = next_events.group_id
+	LEFT JOIN
+	group_members gm
+	ON gm.group_id = g.id
+	LEFT JOIN
+	users u
+	ON gm.member_id = u.id
+GROUP BY
+	g.id
+	,g.group_name
+	,g.group_image
+	,g.group_location
+	,e1.movie_name
+	,previous_events.max_event_date
+	,next_events.min_event_date
+	,u.user_email
+"""
+
+# [user_name,user_email,user_avatar,user_data,google_auth_id,admin_status,user_email]
+sql_insert_new_users = """
+INSERT INTO users (user_name,user_email,user_avatar,user_data,google_auth_id,admin_status)
+SELECT %s,%s,%s,%s,%s,%s
+WHERE NOT EXISTS (SELECT id FROM users WHERE user_email = %s )
+RETURNING id;
+"""
+
+# [group_name,group_location,group_image,group_creator_id,group_name]
+sql_insert_new_groups = """
+INSERT INTO groups (group_name,group_location,group_image,group_creator_id,founded_date)
+SELECT %s,%s,%s,%s,current_date
+WHERE NOT EXISTS (SELECT id FROM groups WHERE group_name = %s )
+RETURNING id;
+"""
+
+# [group_id,member_id,admin_status,group_id,member_id]
+sql_insert_new_group_members = """
+INSERT INTO group_members (group_id,member_id,admin_status)
+SELECT %s,%s,%s
+WHERE NOT EXISTS (SELECT id FROM group_members WHERE group_id = %s AND member_id = %s)
+RETURNING id;
+"""
+
+# [user_id,group_id]
+sql_delete_group_members = """
+DELETE FROM group_members WHERE member_id = %s AND group_id = %s;
+"""
+
+
+sql_get_user_id = """
+SELECT DISTINCT id FROM users WHERE user_email = %s
+"""

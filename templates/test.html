@@ -56,7 +56,7 @@
       }
     };
 
-    $('body').popover({ selector: '[data-popover]', trigger: 'hover', placement: 'right', delay: {show: 10, hide: 50}});
+    $('body').popover({ selector: '[data-popover]', trigger: 'hover', placement: 'right', delay: {show: 180, hide: 30}});
     });
 
     function filter_search(element) {
@@ -337,12 +337,12 @@
               {% else %}
                 <div id="checked{{row[10]}}" style="display: none;">
               {% endif %}
-                  <img class="cornerimage" border="0" src="http://www.greenrevolutionems.com/wp-content/uploads/2013/04/check-mark-11-512-300x300.png" alt="" width="75" height="75"/>
+                  <img class="cornerimage" border="0" src="./static/images/check.png" alt="" width="75" height="75"/>
                 </div>
               </div>
             <div>
               <p style="margin-bottom: 0px; padding-top: 8px"><a href="http://imdb.com/title/{{row[10]}}/" target="blank" style="padding-left: 5px; padding-right: 5px;">{{row[0]}}</a></p> 
-              <h6 style="margin-top: 0px; padding-bottom: 10px">IMDB Rating: {{row[4]}}</h6>
+              <h7 style="margin-top: 0px; padding-bottom: 10px; font-family: sans-serif">IMDB Rating: {{row[4]}}</h7>
             </div>
           </div>
         </div>
@@ -357,7 +357,7 @@
 
   <script src="./static/jquery-1.11.1.min.js"></script>
   <script src="./static/bootstrap.min.js"></script>
-  <script src="./static/js/movies.1.04.js"></script>
+  <script src="./static/js/movies.1.05.js"></script>
 
 </body>
 </html>

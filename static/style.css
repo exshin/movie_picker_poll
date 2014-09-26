@@ -2,41 +2,19 @@ body {
   font-size: 1.1em;
   background-color: #F6F8F9;
 }
-h1{
-	color:#a7a7a7;
-	font-size:18px;
-	padding:0px;
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Corben', Georgia, Times, serif;
 }
-h2{
-	color:#000000;
-	font-size:16px;
-	padding:0px;
+p, div {
+    font-family: 'Nobile', Helvetica, Arial, sans-serif;
 }
-h3{
-	color:#000000;
-	font-size:14px;
-	padding:0px;
+a, li, label {
+    font-family: 'Monospace', Helvetica, Arial, sans-serif;
 }
-h4{
-	color:#000000;
-	font-size:14px;
-	padding:0px;
+button {
+    font-family: 'sans-serif', Helvetica, Arial, sans-serif;
 }
-h5{
-	color:#000000;
-	font-size:12px;
-	padding:0px;
-}
-h6{
-	color:#000000;
-	font-size:11px;
-	padding:0px;
-}
-h7{
-	color:#808080;
-	font-size:11px;
-	padding:0px;
-}
+
 .container{
 	margin:1;
 	width: 850px;
