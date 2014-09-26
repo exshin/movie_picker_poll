@@ -9,7 +9,7 @@ from datetime import datetime
 from datetime import timedelta
 from movie_picker import *
 from results_stats import get_results_stats, save_bar_results_to_csv, save_pie_results_to_csv
-
+import json
 
 from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
