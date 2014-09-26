@@ -180,11 +180,14 @@ def add_new_movie():
 @app.route('/watched')
 def show_watched():
     # Get watched movies list
-    watched_results = get_watched()
-    return render_template('watched.html',
-                        results=watched_results,
-                        user=session['user'],
-                        user_pic=session['profile_image_url'])
+    if session.get('user') and session.get('user_email'):
+        watched_results = get_watched()
+        return render_template('watched.html',
+                            results=watched_results,
+                            user=session['user'],
+                            user_pic=session['profile_image_url'])
+    else:
+        return redirect("/movies", code=302)
 
 @app.route('/groups',methods=['GET','POST'])
 def show_groups():
