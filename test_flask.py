@@ -133,6 +133,16 @@ def groupjoinleave():
             groups_id_list.append(row[0])
     return jsonify({'groups_id': groups_id_list})
 
+@app.route('/hide_poster/',methods=['GET'])
+def hide_poster():
+    return_data = {"value": request.args.get('hide_imdbid')}
+    imdbid = str(request.args.get('hide_imdbid'))
+    logic = 'remove'
+    print session['user_email'], logic.title(), imdbid
+    # add removed ids to hide_movies table
+    hide_movies(session.get('user_email'),imdbid,logic)
+    return jsonify({'hide_imdbid': imdbid})
+
 
 @app.route('/profile')
 def profilepage():
@@ -186,6 +196,14 @@ def show_watched():
                             results=watched_results,
                             user=session['user'],
                             user_pic=session['profile_image_url'])
+    else:
+        return redirect("/movies", code=302)
+
+@app.route('/events')
+def show_events_landing():
+    # Get watched movies list
+    if session.get('user') and session.get('user_email'):
+        return render_template('events.html')
     else:
         return redirect("/movies", code=302)
 

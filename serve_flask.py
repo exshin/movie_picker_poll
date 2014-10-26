@@ -180,6 +180,16 @@ def show_groups():
     else:
         return redirect("/movies", code=302)
 
+@app.route('/hide_poster/',methods=['GET'])
+def hide_poster():
+    return_data = {"value": request.args.get('hide_imdbid')}
+    imdbid = str(request.args.get('hide_imdbid'))
+    logic = 'remove'
+    print session['user_email'], logic.title(), imdbid
+    # add removed ids to hide_movies table
+    hide_movies(session.get('user_email'),imdbid,logic)
+    return jsonify({'hide_imdbid': imdbid})
+
 @app.route('/groupjoinleave/',methods=['GET'])
 def groupjoinleave():
     return_data = {"value": request.args.get('group_id')}

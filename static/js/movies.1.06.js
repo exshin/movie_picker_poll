@@ -18,10 +18,10 @@ $( document ).ready(function(){
       };
       // Change popup HTML Button to "VOTE" and Toggle Image
       $(check_id).toggle(this.checked);
-      var button_string = "<input type='hidden' name='vote_imdbID' id='vote_imdbID' value='"+current_vote_imdbID+"'></input><button type='button' class='btn btn-primary btn-xs voteBtn' name='voteBtn' id='voteBtn'><i class='fa fa-thumbs-up' style='margin-right: 3px'></i>Vote</button></div>";
+      var button_string = "<input type='hidden' name='vote_imdbID' id='vote_imdbID' value='"+current_vote_imdbID+"'></input><button type='button' class='btn btn-primary btn-xs voteBtn' name='voteBtn' id='voteBtn' style='width: 80px'><i class='fa fa-thumbs-up' style='margin-right: 3px;'></i>Vote</button><button style='float:left; width: 80px' type='button' value='"+current_vote_imdbID+"' class='btn btn-warning btn-xs hideBtn' onclick='hide_poster(this.value)'><i class='fa fa-times' style='margin-right: 3px;'></i>Remove</button></div>";
       $(divbutton_id).html(button_string);
       var popup_button_content = $(popup_button_id)[0].dataset.content;
-      new_content = "<div style='float: left; margin-bottom: 15px; margin-top: 5px' id='buttondiv" + current_vote_imdbID + "'>" + button_string +  "<div style='float: left; width: 180px;'>" + popup_button_content.split("<div style='float: left; width: 180px;'>")[1];
+      new_content = "<div class='btn-group' style='float: left; margin-bottom: 15px; margin-top: 5px' id='buttondiv" + current_vote_imdbID + "'>" + button_string +  "<div style='float: left; width: 180px;'>" + popup_button_content.split("<div style='float: left; width: 180px;'>")[1];
       $(popup_button_id)[0].dataset.content = new_content;
     }
     else {
@@ -32,10 +32,10 @@ $( document ).ready(function(){
       my_votes.push(current_vote_imdbID);
       // Change popup HTML Button to "UNVOTE" and Toggle Image
       $(check_id).toggle(this.checked);
-      var button_string = "<input type='hidden' name='vote_imdbID' id='vote_imdbID' value='"+current_vote_imdbID+"'></input><button type='button' class='btn btn-danger btn-xs voteBtn' name='voteBtn' id='voteBtn'><i class='fa fa-thumbs-down' style='margin-right: 3px'></i>Unvote</button></div>";
+      var button_string = "<input type='hidden' name='vote_imdbID' id='vote_imdbID' value='"+current_vote_imdbID+"'></input><button type='button' class='btn btn-danger btn-xs voteBtn' name='voteBtn' id='voteBtn' style='width: 80px'><i class='fa fa-thumbs-down' style='margin-right: 3px;'></i>Unvote</button><button style='float:left; width: 80px' type='button' value='"+current_vote_imdbID+"' class='btn btn-warning btn-xs hideBtn' onclick='hide_poster(this.value)'><i class='fa fa-times' style='margin-right: 3px;'></i>Remove</button></div>";
       $(divbutton_id).html(button_string);
       var popup_button_content = $(popup_button_id)[0].dataset.content;
-      new_content = "<div style='float: left; margin-bottom: 15px; margin-top: 5px' id='buttondiv" + current_vote_imdbID + "'>" + button_string +  "<div style='float: left; width: 180px;'>" + popup_button_content.split("<div style='float: left; width: 180px;'>")[1];
+      new_content = "<div class='btn-group' style='float: left; margin-bottom: 15px; margin-top: 5px' id='buttondiv" + current_vote_imdbID + "'>" + button_string +  "<div style='float: left; width: 180px;'>" + popup_button_content.split("<div style='float: left; width: 180px;'>")[1];
       $(popup_button_id)[0].dataset.content = new_content;
     };
     $.ajax({
