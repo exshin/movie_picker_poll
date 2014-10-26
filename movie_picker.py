@@ -36,7 +36,7 @@ def my_movie_votes(user_email):
 	# get movie votes within a given time frame
 	try:
 		conn,dbCursor = connect_db()
-		dbCursor.execute(sql_my_movie_counts,[user_email,])
+		dbCursor.execute(sql_my_movie_counts,[user_email,user_email])
 		results = dbCursor.fetchall()
 		conn.close()
 	except Exception as error:
@@ -255,3 +255,18 @@ def join_leave_group(user_id,group_id,logic):
 			conn.close()
 		except Exception as error:
 			print error, 'leave logic error'
+
+def hide_movies(user_email,hide_imdbid,logic):
+	# remove movies from view
+	conn, dbCursor = connect_db()
+	if logic == 'remove':
+		try:
+			dbCursor.execute(sql_hide_imdbid,[user_email,hide_imdbid,user_email,hide_imdbid])
+			dbCursor.execute(sql_delete_my_movies_single,[user_email,hide_imdbid])
+			conn.commit()
+			conn.close()
+		except Exception as error:
+			print 'Error removing movie from view - ',user_email,hide_imdbid,'::',error
+	else:
+		# TODO: unhide
+		pass

@@ -71,12 +71,17 @@ FROM
 	LEFT JOIN
 	my_movies my_votes
 	ON my_votes.imdb_id = d.imdbid AND my_votes.user_email = %s
+	LEFT JOIN
+	my_hidden_movies hidden
+	ON hidden.imdb_id = d.imdbid AND hidden.user_email = %s
 WHERE
 	w.id IS NULL
 	AND
 	d.title IS NOT NULL
 	AND
 	d.poster != ''
+	AND
+	hidden.id IS NULL
 GROUP BY
 	v.movie
 	,d.title
@@ -378,3 +383,11 @@ DELETE FROM group_members WHERE member_id = %s AND group_id = %s;
 sql_get_user_id = """
 SELECT DISTINCT id FROM users WHERE user_email = %s
 """
+
+sql_hide_imdbid = """
+INSERT INTO my_hidden_movies (user_email,imdb_id,date_hidden)
+SELECT %s,%s,current_date
+WHERE NOT EXISTS (SELECT id FROM my_hidden_movies WHERE user_email=%s AND imdb_id=%s)
+RETURNING id;
+"""
+
