@@ -60,6 +60,7 @@ SELECT DISTINCT
 	,d.poster
 	,d.imdbid
 	,my_votes.my_vote
+	,d.info_date
 FROM
 	votes v
 	LEFT JOIN
@@ -94,8 +95,9 @@ GROUP BY
 	,d.poster
 	,d.imdbid
 	,my_votes.my_vote
+	,d.info_date
 ORDER BY
-	COUNT(DISTINCT v.user_email) desc
+	d.info_date desc, COUNT(DISTINCT v.user_email) desc
 """
 
 sql_write_vote = """
